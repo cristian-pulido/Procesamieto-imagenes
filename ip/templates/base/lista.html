@@ -1,0 +1,98 @@
+{% extends 'base/base.html' %}
+
+
+
+{% block title %} Lista Archivos {% endblock %}
+{% block content %}
+
+{% load scripts %}
+
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="alert alert-success">
+    {{ message }}
+  </div>
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+
+<button style="vertical-align: middle;" type="button" onclick="location.href='{% url 'carga' %}'" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i> Añadir Registro</button>
+
+
+
+{% get_archivos user.pk as archivos %}
+
+{% if archivos|length == 0 %}
+<h3>No se encontraron archivos </h3>
+
+{% else %}
+
+<h3> Lista de Archivos Cargados </h3>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Nombre</th>
+      <th scope="col"> Acciones </th>
+    </tr>
+  </thead>
+  <tbody>
+
+  	{% for item in archivos %}
+    
+    <tr class="table-primary">
+      {% if item.anonimo == True %}
+      <td style="vertical-align: middle;">
+        <form>
+          <button class="btn btn-link enabled" formaction="{% url 'picture' item.pk%}" title="Ver información">{{ forloop.counter }}
+          </button>
+        </form>
+      </td>
+      {% else %}
+      <td style="vertical-align: middle;">
+        <form>
+          <button class="btn btn-link enabled" formaction="#" title="Aun en Proceso">{{ forloop.counter }}
+          </button>
+        </form>
+      </td>
+      {% endif%}
+      <td style="vertical-align: middle;">{{item.get_name}}</td>
+      <td>
+      	<form>
+            {% if item.anonimo == 1 and perms.validacion.can_ver_slice %}
+              <button class="btn btn-info"  formaction="{% url 'img_to_show' item.pk %}" title="Ver Imágenes">
+              <i class="glyphicon glyphicon-eye-open"></i>
+              </button>
+              {% endif %}
+            
+      		{% if item.anonimo == True %}
+  		<button class="btn btn-success"  formaction="{{ item.file.url }}" title="Descargar">
+              <i class="glyphicon glyphicon-download"></i>
+              </button>
+            {% endif %}
+      	<button class="btn btn-danger"  formaction="{% url 'upload-delete' item.pk %}" title="Eliminar">
+                                  <i class="glyphicon glyphicon-trash"></i>
+
+                                  </button>
+
+          </form>
+
+      </td>
+    </tr>
+
+    {% endfor %}
+    
+  </tbody>
+</table>
+
+
+{% endif %}
+
+
+
+{% endblock %}

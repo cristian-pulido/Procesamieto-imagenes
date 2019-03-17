@@ -1,0 +1,74 @@
+{% extends 'base/base.html' %}
+
+
+
+{% block title %} Visualización {% endblock %}
+{% block content %}
+
+{% if not perms.validacion.can_ver_slice or object.user.pk != user.pk %}
+<script type="text/javascript">
+        window.location="{% url 'login' %}";
+</script>
+{% endif %}
+
+
+
+<h3> Visualizador de imágenes  {{object.get_name}} </h3>
+
+
+<h4>Seleccione Imagen a Mostrar</h4>
+
+
+
+<select name="imagen" onchange="cargar()" id="selector"> 
+  
+  <option value="" selected >-----------</option>
+      {% for s in object.img_to_show_set.all %}
+        <option value="{{s.path}}">{{s.imagen}}</option>
+    {% endfor%}
+</select>
+
+<br>
+<br>
+
+<button onclick="reload()">Reiniciar</button>
+
+
+
+
+<script>
+	function cargar(){
+	 	 a=document.getElementById('visor');
+         b=document.getElementById('selector');
+        
+	 	 a.contentDocument.getElementById("archivo").value=b.value;
+        
+         a.contentWindow.carga();
+         
+
+	}
+    
+    function reload(){
+	 	 a=document.getElementById('visor');
+         a.contentWindow.location.reload(true);
+         b=document.getElementById('selector').value="";
+                  
+
+	}
+
+</script>
+
+
+<br>
+
+<br>
+
+
+
+<iframe src="{% url 'visor' %}" width="100%" height="1000"  id="visor" frameborder="0" >
+
+
+
+
+
+{% endblock %}

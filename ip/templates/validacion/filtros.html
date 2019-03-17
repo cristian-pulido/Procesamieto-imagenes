@@ -1,0 +1,79 @@
+{% extends 'base/base.html' %}
+
+{% block title %} Listado de Filtros Tag Dicoms {% endblock %}
+{% block content %}
+
+
+
+<h1>Filtros Tag de Imágenes Dicom</h1>
+
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="alert alert-success">
+    {{ message }}
+  </div>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% load scripts_validacion %}
+<br>
+    <form>
+          <button class="btn btn-primary" formaction="{% url 'filtro_crear' %}">Crear filtro</button>
+      </form>
+    <br>
+
+{% get_filters_by_user user.pk as filters %}
+
+
+
+
+{% if filters %}
+        {% get_name_images filters as imagenes %}
+        {% for images in imagenes %}
+            <ul>
+                <li>{{images}}</li>
+                {% get_tags_images images user.pk as tags %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre Tag</th>
+                            <th>Tolerancia</th>
+                            <th>Valor Esperado</th>
+                            <th>Unidades</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                {% for tag in tags %}
+
+
+                    <tbody>
+                        <tr>
+                            <td>{{tag.tag}}</td>
+                            <td>{{tag.precision}}</td>
+                            <td>{{tag.v_esperado}}</td>
+                            <td>{{tag.medidas}}</td>
+                            <td>
+                                <form>
+                                    <button class="btn btn-primary" formaction="{% url 'filtro_editar' tag.pk %}"><i class="glyphicon glyphicon-pencil"></i></button>
+                                    <button class="btn btn-danger" formaction="{% url 'filtro_eliminar' tag.pk %}"><i class="glyphicon glyphicon-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+
+
+                {% endfor %}
+                </table>
+            </ul>
+        {% endfor %}
+{% else %}
+<h3>No se encontro registros.</h3>
+
+{% endif %}
+
+
+
+{% endblock %}

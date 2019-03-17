@@ -1,0 +1,218 @@
+{% extends 'base/base.html' %}
+
+{% block title %} Formulario Grupo de Tareas {% endblock %}
+{% block content %}
+
+{% if object %}
+{% if not object.eliminable %}
+    {% if not  user.is_superuser  %}
+    <script type="text/javascript">
+            window.location="{% url 'login' %}";
+    </script>
+    {% endif %}
+{% endif %}
+{% endif %}
+
+
+
+{% load scripts_validacion %}
+{% load scripts_procesamiento %}
+
+
+<style>
+#div1,#div2 {
+  float: center;
+  width: 100%;
+  height: 250px;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid black;
+  text-align: center;
+  overflow: auto;
+}
+
+</style>
+
+
+
+
+
+
+<form method="post">
+
+    
+
+    {% csrf_token %}
+
+    <div class="col-md-8 col-md-offset-2">
+        <h2>Creación de Grupo de Tareas</h2>
+        <br>
+      <label >Nombre : </label>
+        
+      {{form.nombre}}
+      
+        
+        <br>
+        
+        {% get_img_with_tasks as images %}
+        
+        <label >Tipo de Imagen : </label>
+        <select required="required"  onchange="mostrar()" id="id_tipo_imagen" name='tipo_imagen'>
+            <option value="">---------------</option>
+            {% for img in images %}
+                <option value="{{img.pk}}" {% if object.tipo_imagen.pk == img.pk %} selected {% endif %}>{{img.nombre}}</option>
+            {% endfor %}
+       </select>
+
+       
+        
+        
+        <label for="id_dependencia">Dependencia:</label>
+        <select name="dependencia" id="id_dependencia">
+          <option value="" >---------</option>
+            {% get_taskgroups as grupos %}
+          {% for g in grupos %}
+                <option value="{{g.pk}}" {% if object.dependencia.pk == g.pk %} selected {% endif %} >{{g}}</option>
+            {% endfor %}
+
+        </select>
+
+        
+        
+        
+        <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h4>Tareas relacionadas a la imagen</h4>
+        <hr  />
+            
+         {% for img in images %}
+        
+        {% get_task_for_images img  as tasks %}
+        
+
+        {% for task in tasks %}
+            <h4 class="column" draggable="true" ondragstart="drag(event)" {% if task.dependencia %} title="{{task.dependencia}}" {% endif %} id="{{task.pk}}" style="background-color:powderblue; display:none" >{{task}} </h4>
+
+        {% endfor %}
+       
+      {% endfor %}
+        
+
+        </div>
+
+        <br>
+        * Nota: Tener en cuenta las dependencias que existen entre las tareas, estas se muestran poniendo el cursor sobre una de ellas.
+        
+        <br>
+        <div id="div2" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h4>Tareas Escogidas Para el grupo de tareas</h4>
+        <h5>Arrastre desde el recuadro de arriba para elegir las tareas y su orden</h5>
+        <hr  />
+        
+        </div>
+
+        
+
+      <br>
+
+      
+     
+        
+
+       
+        {{form.orden.as_hidden}}
+
+      
+    
+
+       <br>
+       <br>
+      <button class="btn btn-primary" id="guardar" type="submit">Guardar</button>  
+    </div>
+
+    
+
+    
+    
+
+</form>
+
+
+
+<script>
+    function mostrar() {
+
+     document.getElementById("div1").innerHTML = '<h4>Tareas relacionadas a la imagen</h4> <hr  />  {% for img in images %}  {% get_task_for_images img  as tasks %} {% for task in tasks %} <h4 class="column" draggable="true" ondragstart="drag(event)" id="{{task.pk}}" name="{{img.pk}}" {% if task.dependencia %} title="{{task.dependencia}}" {% endif %} style="background-color:powderblue; display:none" >{{task}} </h4>        {% endfor %}     {% endfor %}      ';
+        
+    document.getElementById("div2").innerHTML = ' <h4>Tareas Escogidas Para el grupo de tareas</h4>      <h5>Arrastre desde el recuadro de arriba para elegir las tareas y su orden</h5>     <hr  />';
+ 
+        
+      document.getElementById("id_orden").value="";  
+      var z = document.getElementsByClassName("column");
+        var i;
+      for (i = 0; i < z.length; i++) {
+          z[i].style="display:none";
+          
+      }
+        
+        
+      var x = document.getElementById('id_tipo_imagen').value;
+      var y = document.getElementsByName(x);
+      var i;
+      for (i = 0; i < y.length; i++) {
+          y[i].style="display:onblock";
+          y[i].style="background-color:powderblue";
+      }
+        
+    }
+    
+    function terminar() {
+        var c = document.getElementById("div2").childNodes
+        var x = "";
+        for (i = 0; i < c.length; i++) {
+        
+              if(Number.isInteger(parseInt(c[i].id)) == true){
+                  x+=c[i].id+"_";
+              
+              };
+            
+        
+            
+          }
+        document.getElementById("id_orden").value=x;
+        
+    }
+    
+    
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("text");
+      ev.target.appendChild(document.getElementById(data));
+      terminar();
+    }  
+    
+    
+</script>
+
+{% if object %}
+<script>
+    mostrar()
+    document.getElementById("div1").innerHTML = '<h4>Tareas relacionadas a la imagen</h4> <hr  />    {% get_task_for_images object.tipo_imagen  as tasks %} {% for task in tasks %} {% if task not in object.get_tasks %} <h4 class="column" draggable="true" ondragstart="drag(event)" id="{{task.pk}}" name="{{img.pk}}" {% if task.dependencia %} title="{{task.dependencia}}" {% endif %} style="background-color:powderblue; display:onblock" >{{task}} </h4>   {% endif %}{% endfor %}  ';
+    
+    document.getElementById("div2").innerHTML = '<h4>Tareas relacionadas a la imagen</h4> <hr  />  {% get_task_for_images object.tipo_imagen  as tasks %} {% for task in tasks %} {% if task in object.get_tasks %} <h4 class="column" draggable="true" ondragstart="drag(event)"id="{{task.pk}}" name="{{img.pk}}" {% if task.dependencia %} title="{{task.dependencia}}" {% endif %} style="background-color:powderblue; display:onblock" >{{task}} </h4>        {% endif %}{% endfor %}  ';
+    
+    document.getElementById("id_orden").value="{{object.orden}}";
+    
+    
+</script>
+{% endif %}
+
+
+{% endblock %}

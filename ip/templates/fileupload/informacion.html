@@ -1,0 +1,192 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+{% if user.pk != object.user.pk %}
+<script type="text/javascript">
+        window.location="{% url 'login' %}";
+</script>
+{% endif %}
+
+{% load scripts_validacion %}
+{% load scripts_procesamiento %}
+
+<h3>Información Imagen {{object.get_name}}</h3>
+
+<br>
+
+Seleccione una pestaña:
+
+<br><br>
+
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#tags">Tags Dicom</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#mc">Corrección de Movimiento</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#ejecucion">Ejecución Pipelines</a>
+  </li>
+</ul>
+<div id="myTabContent" class="tab-content">
+  <div class="tab-pane fade" id="tags">
+    <br>
+    Imágenes Encontradas en los archivos Dicom junto con sus parametros
+
+    <br>  
+    <br>
+
+
+    {% get_name_images_by_file object.pk as images %}
+
+    {% for img in images %}
+
+    	{% get_tags_images img.nombre user.pk as tags_default %}
+
+    	{% if tags_default %}
+
+	    	<div class="container">
+			  
+			  <div class="panel-group">
+			    <div class="panel panel-default">
+			      <div class="panel-heading">
+			        <h4 class="panel-title">
+			          <a data-toggle="collapse" href="#collapse_{{img.pk}}">{{img.nombre}}</a>
+			        </h4>
+			      </div>
+			      <div id="collapse_{{img.pk}}" class="panel-collapse collapse">
+			        <div class="panel-body">
+			        	<table class="table table-hover">
+			        		<thead>
+							    <tr>
+							      <th scope="col">Ref. Dicom</th>
+							      <th scope="col">Nombre</th>
+							      <th scope="col"> Valor </th>
+							      <th scope="col"> Valor Esperado</th>
+							      <th scope="col"> Tolerancia</th>
+							      <th scope="col"> Validación</th>
+
+							    </tr>
+							  </thead>
+							  <tbody>
+							  	{% for tag in tags_default %}
+							  		{% get_camp_images_by_tag tag object as campo %}
+							  		<tr>
+                                      <td >{{campo.tag.num_tag}}</td>
+                                      <td >{{campo.tag.name_tag}}</td>
+                                      <td >{{campo.valor}}</td>
+                                      <td >{{campo.v_esperado}}</td>
+                                      <td >{{campo.precision}}</td>
+                                      <td >
+                                        {% if campo.cumple == True  %}   <span style="color:green" class="glyphicon glyphicon-check" ></span> {% endif %}
+                                        {% if check == False  %}   <span style="color:red" class="glyphicon glyphicon-remove-circle"></span> {% endif %}
+
+                                      </td>
+							  		</tr>
+							  	{% endfor %}
+
+							  </tbody>
+
+			        	</table>
+
+			        	
+			    	</div>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+
+		{% else %}
+
+			<p>{{img.nombre}}
+
+		{% endif %}
+
+		<br>
+
+
+
+    {% endfor %}
+
+
+  </div>
+    
+  <div class="tab-pane fade  " id="mc">
+    
+  	<h3>Moviento de Cabeza Imagen Funcional</h3>
+
+	<h4>Movimiento Medio</h4>
+      <table class="table table-hover">
+        <tbody>
+        <tr>
+          <th>Absoluto</th>
+          <td>{{ object.parametrosmotioncorrect.absolute_func }} mm </td>
+          <th>Relativo</th>
+          <td>{{ object.parametrosmotioncorrect.relative_func }} mm</td>
+        </tr>
+        </tbody>
+      </table>
+      <center>
+      <div id="div_func_desplazamiento"><!-- Plotly chart will be drawn inside this DIV --></div>
+      <div id="div_func_rotaciones"><!-- Plotly chart will be drawn inside this DIV --></div>
+      <div id="div_func_traslaciones"><!-- Plotly chart will be drawn inside this DIV --></div>
+      </center>
+    
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="{{object.parametrosmotioncorrect.graphic_desplazamiento_func}}"></script>
+    <script src="{{object.parametrosmotioncorrect.graphic_rotacion_func}}"></script>
+    <script src="{{object.parametrosmotioncorrect.graphic_traslacion_func}}"></script>
+
+
+  </div>
+    
+  <div class="tab-pane fade  " id="ejecucion">
+    
+  	<h3>Ejecución de Pipelines</h3>
+        {% get_pipelines as pipe %}
+      
+      
+      <table class="table table-hover">
+       <thead>
+           <tr>
+               <th>Nombre</th>
+               <th>Tipo Imagen</th>
+               <th>Estado</th>
+               <th>Acción</th>
+               
+           </tr>
+
+       </thead>
+        <tbody>
+            {% for p in pipe %}
+            {% get_estado_pipeline p object as task_c%}
+            <tr>
+               <td>{{p.nombre}}</td>
+               <td>{{p.tipo_imagen}}</td>
+                <td>{% if task_c %} {{task_c.0.estado}} {% else%} Aun no iniciado {% endif %}</td>
+                
+               <td>{% if task_c %}  {% else%} 
+                   <form>
+                  <button class="btn btn-primary" formaction="{% url 'run_pipeline' user.pk object.pk p.pk %}" title="Ejecutar"><i class="glyphicon glyphicon-log-in"></i></button>
+                </form>
+                   
+                   {% endif %}</td>
+               
+           </tr>
+            {% endfor %}
+        
+        </tbody>
+      </table>
+      
+
+
+
+  </div>
+  
+</div>
+
+
+
+{% endblock %}

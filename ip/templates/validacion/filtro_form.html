@@ -1,0 +1,65 @@
+{% extends 'base/base.html' %}
+
+{% block title %} Formulario Filtro {% endblock %}
+{% block content %}
+
+{% if object %}
+{% if object.user.pk != user.pk %}
+<script type="text/javascript">
+        window.location="{% url 'login' %}";
+</script>
+{% endif %}
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="col-md-8 col-md-offset-2">
+                {% if form.errors %}
+                    <!-- Error messaging -->
+                    <div id="errors">
+                        <div class="inner">
+                            <p>There were some errors in the information you entered. Please correct the following:</p>
+                            {{ form.non_field_errors }}
+                            <ul>
+                                {% for field in form %}
+                                    {% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- /Error messaging -->
+                {% endif %}
+        </div>
+
+
+
+
+    <div class="col-md-8 col-md-offset-2">
+        <h1> Filtro </h1>
+
+        {{form.as_p}}
+
+    </div>
+
+
+    <div class="col-md-8 col-md-offset-2">
+        <button class="btn btn-primary" id="guardar" type="submit">Guardar</button>
+    </div>
+
+</form>
+<br>
+<br>
+
+
+
+
+<script>
+function rellenar() {
+    document.getElementById("id_user").value = "{{user.pk}}";
+    
+}
+
+rellenar()
+</script>
+{% endblock %}

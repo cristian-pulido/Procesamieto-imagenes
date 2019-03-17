@@ -1,0 +1,364 @@
+{% extends 'base/base.html' %}
+
+{% block title %} Lista Grupos de Tareas {% endblock %}
+{% block content %}
+{% load scripts_procesamiento %}
+
+<h3> Lista Pipelines </h3>
+<div id="pre" >
+      <br>
+      {% get_pipelines as pipe %}
+      {% get_taskgroups as grupos %}
+
+    {% if pipe %}
+
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item active "><a onclick="muestrapipeline()">Pipelines</a></li>
+
+        {% for p in pipe %}
+        <li class="breadcrumb-item" style="display:none" id="lista_{{p.nombre}}" onclick="muestragrupos('{{p}}')" name="groups"><a>{{p.nombre}}</a></li>
+        {% endfor %}
+
+        {% for g in grupos %}
+        <li class="breadcrumb-item" style="display:none" id="lista_{{g.nombre}}"   name="tasks" ><a>{{g.nombre}}</a></li>
+        {% endfor %}
+
+
+      </ol>
+
+
+        <div id="pipelines" >
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Tipo imagen</th>
+                <th>Dependencia</th>
+                
+
+                
+                
+                <th>Editar Pipeline</th>
+                
+                
+                <th>Eliminar Pipeline</th>
+                
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in pipe %}
+              <tr>
+                <td><a onclick="muestragrupos('{{p}}')">{{p}}</a></td>
+                <td>{{p.tipo_imagen}}</td>
+                <td>{% if p.dependencia %}{{p.dependencia}}{% endif%}</td>
+                
+               
+                
+                
+                <td>
+                
+                {% if p.eliminable or user.is_superuser %}
+                <form>
+                  <button class="btn btn-primary" formaction="{% url 'pipeline_editar' p.pk %}" ><i class="glyphicon glyphicon-pencil"></i></button>
+                </form>
+                {% endif %}
+                </td>
+
+                
+                <td>
+                    
+                {% if p.eliminable %}
+                <form>
+                  <button class="btn btn-danger" formaction="{% url 'pipeline_eliminar' p.pk %}"><i class="glyphicon glyphicon-trash"></i></button>
+                </form>
+                </td>
+                  
+                {% endif %}
+
+                
+
+              </tr>
+
+              {% endfor %}
+            </tbody>
+          </table>
+
+        </div>
+        <div id="groups">
+
+
+
+          {% for p in pipe %}
+
+          <table class="table table-hover" id="{{p.nombre}}" style="display:none">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Dependencia</th>
+                
+                <th>Editar Grupo</th>
+                
+                
+                <th>Eliminar Grupo</th>
+                
+              </tr>
+            </thead>
+            <tbody>
+              {% for tg in p.get_groups %}
+              <tr>
+                <td><a onclick="muestratareas('{{tg}}')">{{tg}}</a></td>
+                <td>{% if tg.dependencia %}{{tg.dependencia}}{% endif %}</td>
+                
+                <td>
+                    
+                {% if tg.eliminable or user.is_superuser %}
+                <form>
+                  <button class="btn btn-primary" formaction="{% url 'grupo_editar' tg.pk %}"><i class="glyphicon glyphicon-pencil"></i></button>
+                </form>
+                {% endif %}
+                </td>
+
+                
+                
+                <td>
+                {% if tg.eliminable or user.is_superuser %}
+                <form>
+                  <button class="btn btn-danger" formaction="{% url 'grupo_eliminar' tg.pk %}"><i class="glyphicon glyphicon-trash"></i></button>
+                </form>
+                {% endif %}
+                </td>
+
+                
+
+              </tr>
+
+              {% endfor %}
+            </tbody>
+          </table>
+
+          {% endfor %}
+
+
+        </div>
+        <div id="task" >
+
+
+
+          {% for g in grupos %}
+
+                  <table class="table table-hover" id="{{g.nombre}}" style="display:none">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+
+
+                        <th>Dependencia</th>
+                        
+                        <th>Orden</th>
+                      </tr>
+                    </thead>
+                      <tbody>
+                  {% for t in g.get_tasks %}
+                        <tr>
+                            <td>{{t}}</td>
+
+
+                            <td>{% if t.dependencia %}{{t.dependencia}}{% endif%}</td>
+                            
+                            <td>{{ forloop.counter }}</td>
+                        </tr>
+
+                  {% endfor %}
+                      </tbody>
+                  </table>
+              {% endfor %}
+
+
+        </div>
+
+      
+     
+    
+    {% else %}
+    
+    No se han creado pipelines
+    
+    {% endif %}
+    
+    <br>
+    <br>
+    
+     <form>
+        <button class="btn btn-primary" formaction="{% url 'pipeline_crear' %}"><i class="glyphicon glyphicon-plus"></i>  Crear Pipeline</button>
+      </form>
+      
+      <br>
+           
+
+
+
+
+
+
+      <script>
+        function muestragrupos(a){
+          document.getElementById("pipelines").style='display:none';
+          document.getElementById(a).style='display:onblock';
+          document.getElementById("lista_"+a).style='display:onblock';
+
+
+          var x = document.getElementById("task").querySelectorAll(".table");
+          var i;
+          for (i = 0; i < x.length; i++) {
+              x[i].style='display:none';
+          }
+
+          var node = document.getElementsByName("tasks");
+          var i;
+          for (i = 0; i < node.length; i++) {
+              node[i].style='display:none';
+
+          }
+
+
+        }
+
+        function muestrapipeline(){
+          document.getElementById("pipelines").style='display:onblock';
+          var x = document.getElementById("groups").querySelectorAll(".table");
+          var i;
+          for (i = 0; i < x.length; i++) {
+              x[i].style='display:none';
+          }
+          var x = document.getElementById("task").querySelectorAll(".table");
+          var i;
+          for (i = 0; i < x.length; i++) {
+              x[i].style='display:none';
+          }
+
+          var node = document.getElementsByName("tasks");
+          var i;
+          for (i = 0; i < node.length; i++) {
+              node[i].style='display:none';
+          }
+
+          var node = document.getElementsByName("groups");
+          var i;
+          for (i = 0; i < node.length; i++) {
+              node[i].style='display:none';
+          }
+
+
+        }
+
+        function muestratareas(a){
+          var x = document.getElementById("groups").querySelectorAll(".table");
+          var i;
+          for (i = 0; i < x.length; i++) {
+              x[i].style='display:none';
+          }
+          document.getElementById(a).style='display:onblock';
+          document.getElementById("lista_"+a).style='display:onblock';
+
+
+
+        }
+
+
+
+
+      </script>
+
+    </div>
+
+
+<h3> Lista Grupos de Tareas </h3>
+
+
+
+
+<br>
+<form>
+<button class="btn btn-success"  formaction="{% url 'grupo_crear'%}" >
+  <i class="glyphicon glyphicon-plus"> Crear Grupo </i>
+  </button>  
+</form>
+<br>
+    
+    {% if object_list %}
+    
+    <table class="table table-hover">
+        
+        <thead>
+            
+            <tr style="vertical-align: middle;">
+                <th style="vertical-align: middle;"> Nombre Grupo </th>
+                <th style="vertical-align: middle;"> Imagen Relacionada </th>
+                <th style="vertical-align: middle;"> Tareas Ordenadas</th>
+                <th style="vertical-align: middle;"> Dependencia </th>
+                <th style="vertical-align: middle;"> Acciones </th>
+                
+            </tr>
+            
+        </thead>
+        
+        <tbody>
+            
+            {% for object in object_list %}
+                <tr style="vertical-align: middle;">
+                    <td style="vertical-align: middle;"> {{object}} </td>
+                    <td style="vertical-align: middle;"> {{object.tipo_imagen}} </td>
+                    <td style="vertical-align: middle;"> {% for task in object.get_tasks %}
+                        
+                        <p>{{task}}</p> 
+                         
+                        {% endfor %}
+                    </td>
+                    <td style="vertical-align: middle;"> {% if object.dependencia %}{{object.dependencia}} {% endif %}</td>
+                    <td style="vertical-align: middle;"> 
+                        
+                        {% if tg.eliminable or user.is_superuser %}
+                        <form>
+
+                          <button class="btn btn-primary"  formaction="{% url 'grupo_editar' object.pk%}" title="Editar">
+                          <i class="glyphicon glyphicon-pencil"></i>
+                          </button>
+                            
+                          <button class="btn btn-danger"  formaction="{% url 'grupo_eliminar' object.pk%}" title="Eliminar">
+                          <i class="glyphicon glyphicon-trash"></i>
+                          </button>  
+                      
+                        </form>
+                        {% endif %}
+                    
+                    </td>
+
+                </tr>
+            {% endfor %}
+            
+            
+            
+        </tbody>
+        
+        
+    </table>
+    
+        
+    
+    
+    {% else %}
+    
+    <h3> No se encontraron registros </h3>
+    
+    {% endif%}
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
