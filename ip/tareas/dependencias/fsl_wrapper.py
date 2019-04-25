@@ -26,3 +26,7 @@ def eddy_correct(file_in, file_out, referenceNo):
     command = 'eddy_correct ' + file_in + ' ' + file_out + ' ' + referenceNo
     os.system(command)
 
+
+def hex_to_dec(file, file_out):
+    command = 'sh /home/jrudascas/Desktop/DWITest/Additionals/Scripts/hexTodec ' + file + ' > ' + file_out
+    os.system(command)

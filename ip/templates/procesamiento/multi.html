@@ -1,0 +1,135 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+{% load scripts_procesamiento %}
+{% load scripts_validacion %}
+{% load scripts %}
+<div class="container">
+    <form name = "form"  method = "POST" >
+        {% csrf_token %}
+        
+        
+        <h2>  Estados de Pipelines Por Archivos </h2>
+        <br>
+        <br>
+        {% get_pipelines "" as pipe %}
+        Seleccione un Pipeline
+         <select onchange="cambiar()" id="id_select">
+          <option value="0">-------</option>
+          {% for p in pipe %}
+             <option value="{{p.pk}}">{{p.nombre}}</option>
+          {% endfor %}
+        </select> 
+        <button type = "submit" class="btn btn-primary" disabled id="enviar"> Ejecutar Seleccionados    </button>
+        
+        {% get_archivos user.pk as files %}
+        
+        
+        <br>
+        {% for p in pipe %}
+        <div id="p_{{p.pk}}" style="display:none" name="p_div">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Marcar</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                {% for file in files %}
+                    {% get_estado_pipeline p file as task_c%}
+                    {% get_name_images_by_file file.pk as images %}
+                    {% can_run_pipeline images p as run %}
+                
+                    <tr>
+                        <td>{{file.get_name}}</td>
+                        <td>{% if task_c %} {{task_c.0.estado}} {% else%} Sin iniciar {% endif %}</td>
+                        <td>{% if run %}
+                            {% if task_c %}  {% else%} <input type="checkbox" name="check" value="{{file.pk}}" onclick='listar()'> {% endif %} {% endif %}</td>
+                    </tr>
+                
+                {% endfor%}
+                
+            </tbody>
+            
+        </table>
+        </div>
+        {% endfor %}
+        
+        
+        {% for field in form %}
+            {{field.as_hidden}}
+        
+        {% endfor%}
+        
+          
+         
+        
+         
+      </form>
+
+</div>
+
+
+
+
+<script>
+    
+     document.getElementById("id_user").value={{user.pk}};
+   
+</script>
+
+<script>
+    
+     function listar(){
+         document.getElementById("enviar").disabled=false;
+         var x = document.getElementsByName("check");
+         var lista = "";
+         for (i = 0; i < x.length; i++) {
+        
+              if(x[i].checked == true){
+                  lista+=x[i].value+"_";
+              
+              };
+         }
+         
+         document.getElementById("id_lista_img").value=lista;
+         if (lista == ""){
+             document.getElementById("enviar").disabled=true;
+         }
+     }
+    
+    function cambiar(){
+         
+         var a = document.getElementById("id_select").value;
+        
+        
+        document.getElementById("enviar").disabled=true;
+        
+        var y = document.getElementsByName("p_div");
+         for (i = 0; i < y.length; i++) {
+        
+              y[i].style = "display:none";
+         }
+        
+         
+         document.getElementById("id_pipeline_pk").value=a;
+        
+        document.getElementById("p_"+a).style="display:onblock";
+         
+         var x = document.getElementsByName("check");
+         for (i = 0; i < x.length; i++) {
+        
+              x[i].checked = false;
+         }
+         
+         document.getElementById("id_lista_img").value="";
+     }
+   
+</script>
+
+
+{% endblock %}

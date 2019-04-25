@@ -2,11 +2,13 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 # Create your views here.
 
-from apps.procesamiento.forms import gruposForm, PipelineForm
-from apps.procesamiento.models import Taskgroup, Task, Pipeline
+from apps.procesamiento.forms import gruposForm, PipelineForm, MultiForm
+from apps.procesamiento.models import Taskgroup, Task, Pipeline, task_celery
 from apps.validacion.models import Tipoimagenes
 
-from django.views.generic import CreateView, UpdateView, ListView, DeleteView
+
+from django.views.generic import CreateView, UpdateView, ListView, DeleteView, DetailView
+from ip.views import run_pipeline
 
 
 
@@ -87,4 +89,40 @@ class PipelineDelete(DeleteView):
     def get_success_url(self):
         
         return reverse_lazy('grupo_listar')
+    
+def Multi(request):
+    
+    form = MultiForm()
+    
+    if request.method == "POST":
+        form = MultiForm(request.POST)
+        if form.is_valid():
+            data=form.cleaned_data
+            user_pk=data['user']
+            lista=data['lista_img']
+            p_pk=data['pipeline_pk']
+            imgs=lista.split('_')[:-1]
+            for img in imgs:
+                run_pipeline(request,user_pk,img,p_pk)
+            
+            
+            
+        form = MultiForm()
+        return render(request, 'procesamiento/multi.html', {'form': form})
+    
+    if request.method == "GET":
+        form = MultiForm()
+    
+    return render(request, 'procesamiento/multi.html', {'form': form})
+
+    
+    
+class resultados_list(DetailView):
+	model = task_celery
+	template_name = 'procesamiento/resultados.html'
+
+
+    
+       
+  
     

@@ -99,9 +99,9 @@ def registration_atlas_to(path_atlas, path_output, affine, mapping):
         filled_warped_roi = ndim.binary_fill_holes(bin_warped_roi.astype(int)).astype(int)
 
         nib.save(nib.Nifti1Image(filled_warped_roi.astype(np.float32), affine),
-                 path_output + ref_name + '_ROI_' + str(index) + d.extension)
+                 os.path.join(path_output, ref_name + '_ROI_' + str(index) + d.extension))
 
-        list_path_roi.append(path_output + ref_name + '_ROI_' + str(index) + d.extension)
+        list_path_roi.append(os.path.join(path_output, ref_name + '_ROI_' + str(index) + d.extension))
         # print("ROI # " + str(index) + " for " + ref_name + " Atlas, has been saved")
 
         if not ('registered_atlas' in locals()):
@@ -109,6 +109,6 @@ def registration_atlas_to(path_atlas, path_output, affine, mapping):
 
         registered_atlas[filled_warped_roi != 0] = index
 
-    nib.save(nib.Nifti1Image(registered_atlas.astype(np.float32), affine), path_output + ref_name + '_registered_' + d.extension)
+    nib.save(nib.Nifti1Image(registered_atlas.astype(np.float32), affine), os.path.join(path_output, ref_name + '_registered_' + d.extension))
 
     return list_path_roi

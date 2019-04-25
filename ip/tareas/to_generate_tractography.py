@@ -44,7 +44,7 @@ from dipy.tracking.local import ThresholdTissueClassifier
 
 print('    - Starting reconstruction of Tractography...')
 
-if not os.path.exists(path_output + '_tractography_CsaOdf' + '.trk'):
+if not os.path.exists(os.path.join(path_output , '_tractography_CsaOdf' + '.trk')):
     dwi_img = nib.load(path_input)
     dwi_data = dwi_img.get_data()
     dwi_affine = dwi_img.affine
@@ -69,7 +69,7 @@ if not os.path.exists(path_output + '_tractography_CsaOdf' + '.trk'):
 
     streamlines = list(streamlines)
 
-    save_trk(path_output + '_tractography_CsaOdf' + '.trk', streamlines, dwi_affine, dwi_mask_data.shape)
+    save_trk(os.path.join(path_output , '_tractography_CsaOdf' + '.trk'), streamlines, dwi_affine, dwi_mask_data.shape)
 
 print('    - Ending reconstruction of Tractography...')
 print(path_input)

@@ -17,7 +17,7 @@ path_output = sys.argv[2]
 vox_sz=d.vox_sz
 print('    - runnning Reslice...')
 
-finalFileName = path_output + utils.to_extract_filename(path_input) + d.id_reslice + d.extension
+finalFileName = os.path.join(path_output, utils.to_extract_filename(path_input) + d.id_reslice + d.extension)
 if not (os.path.exists(finalFileName)):
     img = nib.load(path_input)
     data = img.get_data()

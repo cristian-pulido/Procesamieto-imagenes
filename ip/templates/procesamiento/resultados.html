@@ -1,0 +1,255 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+
+{% if object.estado != "Finalizado" or object.user.groups.all.0.pk != user.groups.all.0.pk %}
+<script type="text/javascript">
+        window.location="{% url 'login' %}";
+</script>
+{% endif %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
+
+
+{% load scripts_procesamiento %}
+{% load scripts %}
+
+<center>
+<h2>Nombre del Estudio: {{object.pipeline}} </h2>
+</center>
+
+
+    
+    {% get_result_type object 'Ica Component' as imgs_ica %}
+    {% get_result_type object 'Ica Graph' as gra_ica %}
+    
+   
+
+
+    {% get_result_type object 'Imagen' as imgs %}
+
+    
+    {% get_result_type object 'Archivo nii' as nii %}
+
+    {% get_result_type object 'Archivo trk' as trk %}
+
+    {% get_result_type object 'Archivo csv' as csv %}
+
+    {% get_result_type object 'Texto' as text %}
+            
+
+    
+
+<ul class="nav nav-tabs">
+    {% if imgs_ica and gra_ica %}
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#ica">Resultados ICA</a>
+         </li>
+    {% endif %}
+    
+    {% if imgs %}
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#imgs">Imágenes</a>
+         </li>
+    {% endif %}
+    
+        
+    {% if nii or trk or csv or text %}
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#files">Archivos </a>
+         </li>
+    {% endif %}
+    
+    
+  
+ 
+</ul>
+
+
+<div id="myTabContent" class="tab-content">
+  {% if imgs_ica %}  
+  <div class="tab-pane fade " id="ica">
+      <center>
+      {% for a, b in imgs_ica|zip:gra_ica %}
+        <div style="width:100%; float: left; ">
+
+            <h3> Componente # {{ forloop.counter }} </h3>
+            <img src="{{a.path}}" > 
+            <p id="div_ts_{{ forloop.counter }}"  style="width: 100%; height: 100%;"></p>
+            <script src="{{b.path}}"></script>
+
+        </div>
+
+
+        {%endfor%}
+      </center>
+      
+  <div id="default" style="display:none" >
+    <h4>Default State Networks</h4>
+     <img src="http://mriquestions.com/uploads/3/4/5/7/34572113/heine2012x3010-default-networks_orig.png"  height="120%" width="70%">
+</div>
+
+<div style="position:fixed;  text-align: center;bottom: 0; right: 0; " onmouseover="mostrar()" onmouseout="ocultar()">
+    <h2 id="teexto">Resting Default Networks</h2>
+     
+</div>
+
+
+
+<script>
+    
+     function mostrar(){
+         document.getElementById("default").style="position:fixed;  text-align: center; right: 0; display:inline";
+         
+     }
+    
+     function ocultar(){
+         document.getElementById("default").style=" display:none";
+         
+     }
+    
+   
+</script>
+      
+    
+  </div>
+  {% endif %}  
+    
+  {% if imgs %}  
+  <div class="tab-pane fade " id="imgs">
+      <center>
+      {% for img in imgs %}
+          <div >
+              <label>{{img.nombre}}</label>
+              <br>
+          <img src="{{img.path}}" style="width: 100%; height: 100%;" >
+          </div>
+      {% endfor %}
+      </center>
+      
+    
+  </div>
+  {% endif %} 
+    
+  
+    
+  {% if nii or trk or csv or text %}
+    <div class="tab-pane fade " id="files">
+
+          <br>
+          Lista de Archivos
+          <br>
+        
+          
+        
+          {% if nii %}  
+          <hr />
+          <div id="nii">
+
+              <br>
+              Archivos Nifty
+              <br>
+
+              <ul>
+              {% for n in nii %}
+                 <li>
+                     <a href="{{n.path}}" download>{{n.nombre}} </a>
+                 </li>
+
+              {% endfor %}
+              </ul>
+
+
+
+          </div>
+          {% endif %}   
+        
+          {% if trk %}  
+          <hr />
+          <div  id="trk">
+
+              <br>
+              Archivos trk
+              <br>
+
+              <ul>
+              {% for t in trk %}
+                 <li>
+                     <a href="{{t.path}}" download>{{t.nombre}} </a>
+                 </li>
+
+              {% endfor %}
+              </ul>
+
+
+
+          </div>
+          {% endif %}   
+        
+          {% if csv %}  
+          <hr />
+          <div  id="csv">
+
+              <br>
+              Archivos csv
+              <br>
+
+              <ul>
+              {% for t in csv %}
+                 <li>
+                     <a href="{{t.path}}" download>{{t.nombre}} </a>
+                 </li>
+
+              {% endfor %}
+              </ul>
+
+
+
+          </div>
+          {% endif %}
+        
+          {% if text %}  
+          <hr />
+          <div  id="text">
+
+              <br>
+              Archivos de texto
+              <br>
+
+              <ul>
+              {% for t in text %}
+                 <li>
+                     <a href="{{t.path}}" download>{{t.nombre}} </a>
+                 </li>
+
+              {% endfor %}
+              </ul>
+
+
+
+          </div>
+          {% endif %}
+          
+
+
+
+      </div>
+    
+    
+  {% endif %}
+    
+      
+    
+    
+ 
+ 
+
+</div>    
+    
+    
+
+
+{% endblock %}
+

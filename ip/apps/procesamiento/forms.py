@@ -73,3 +73,8 @@ class PipelineForm(forms.ModelForm):
             'tipo_imagen': forms.Select(attrs={'class': 'form-control'}),
             'dependencia': forms.Select(attrs={'required': 'false'}),
         }
+        
+class MultiForm(forms.Form):
+    user = forms.CharField(max_length = 100)
+    lista_img = forms.CharField(max_length = 500)
+    pipeline_pk = forms.CharField(max_length = 100)

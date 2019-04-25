@@ -15,7 +15,7 @@ def T1_path(folder):
     lista = os.listdir(folder)
     path = ""
     for l in lista:
-        if "T1" in l and "3D" in l and os.path.splitext(l)[1] == ".gz":
+        if "T1" in l and os.path.splitext(l)[1] == ".gz":
             path = os.path.join(folder, l)
             break
     return path

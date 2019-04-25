@@ -2,9 +2,9 @@ from django.conf.urls import url
 
 
 from django.urls import path
+from django.views.generic import TemplateView
 
-
-from apps.procesamiento.views import TaskgroupCreate, TaskgroupUpdate, TaskgroupList, TaskgroupDelete, PipelineCreate, PipelineUpdate, PipelineDelete
+from apps.procesamiento.views import TaskgroupCreate, TaskgroupUpdate, TaskgroupList, TaskgroupDelete, PipelineCreate, PipelineUpdate, PipelineDelete, Multi, resultados_list
 
 
 urlpatterns = [
@@ -15,5 +15,8 @@ urlpatterns = [
 	path('pipeline/crear', PipelineCreate.as_view(), name='pipeline_crear'),
 	path('pipeline/editar/<int:pk>/', PipelineUpdate.as_view(), name='pipeline_editar'),  
 	path('pipeline/eliminar/<int:pk>/', PipelineDelete.as_view(), name='pipeline_eliminar'),    
+	url(r'^multi_run',Multi,name="multi_run"),
+
+	path('resultados/<int:pk>', resultados_list.as_view(), name='resultados'),    
     
 ]

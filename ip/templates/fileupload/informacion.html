@@ -2,7 +2,7 @@
 
 {% block content %}
 
-{% if user.pk != object.user.pk %}
+{% if object.user.groups.all.0.pk != user.groups.all.0.pk or not object.anonimo  %}
 <script type="text/javascript">
         window.location="{% url 'login' %}";
 </script>
@@ -11,11 +11,11 @@
 {% load scripts_validacion %}
 {% load scripts_procesamiento %}
 
-<h3>Información Imagen {{object.get_name}}</h3>
+<h3>Nombre del Estudio: {{object.get_name}}</h3>
 
 <br>
 
-Seleccione una pestaña:
+
 
 <br><br>
 
@@ -23,17 +23,19 @@ Seleccione una pestaña:
   <li class="nav-item">
     <a class="nav-link" data-toggle="tab" href="#tags">Tags Dicom</a>
   </li>
+  {% if object.parametrosmotioncorrect %}
   <li class="nav-item">
-    <a class="nav-link active" data-toggle="tab" href="#mc">Corrección de Movimiento</a>
+    <a class="nav-link active" data-toggle="tab" href="#mc">Movimiento de Cabeza</a>
   </li>
+  {% endif %}
   <li class="nav-item">
-    <a class="nav-link active" data-toggle="tab" href="#ejecucion">Ejecución Pipelines</a>
+    <a class="nav-link active" data-toggle="tab" href="#ejecucion">Procesamiento</a>
   </li>
 </ul>
 <div id="myTabContent" class="tab-content">
   <div class="tab-pane fade" id="tags">
     <br>
-    Imágenes Encontradas en los archivos Dicom junto con sus parametros
+    Series Encontradas en los archivos Dicom junto con sus parametros
 
     <br>  
     <br>
@@ -43,7 +45,7 @@ Seleccione una pestaña:
 
     {% for img in images %}
 
-    	{% get_tags_images img.nombre user.pk as tags_default %}
+    	{% get_tags_images img.nombre object.user.pk as tags_default %}
 
     	{% if tags_default %}
 
@@ -76,12 +78,12 @@ Seleccione una pestaña:
 							  		<tr>
                                       <td >{{campo.tag.num_tag}}</td>
                                       <td >{{campo.tag.name_tag}}</td>
-                                      <td >{{campo.valor}}</td>
+                                      <td >{{campo.valor}} {{campo.medidas}}</td>
                                       <td >{{campo.v_esperado}}</td>
                                       <td >{{campo.precision}}</td>
                                       <td >
-                                        {% if campo.cumple == True  %}   <span style="color:green" class="glyphicon glyphicon-check" ></span> {% endif %}
-                                        {% if check == False  %}   <span style="color:red" class="glyphicon glyphicon-remove-circle"></span> {% endif %}
+                                        {% if campo.cumple   %}   <span style="color:green" class="glyphicon glyphicon-check" ></span> 
+                                        {% else  %}   <span style="color:red" class="glyphicon glyphicon-remove-circle"></span> {% endif %}
 
                                       </td>
 							  		</tr>
@@ -112,10 +114,10 @@ Seleccione una pestaña:
 
 
   </div>
-    
+  {% if object.parametrosmotioncorrect %}
   <div class="tab-pane fade  " id="mc">
     
-  	<h3>Moviento de Cabeza Imagen Funcional</h3>
+  	<h3>Moviento de Cabeza</h3>
 
 	<h4>Movimiento Medio</h4>
       <table class="table table-hover">
@@ -141,11 +143,14 @@ Seleccione una pestaña:
 
 
   </div>
+    {% endif%}
     
   <div class="tab-pane fade  " id="ejecucion">
+      
+      
     
-  	<h3>Ejecución de Pipelines</h3>
-        {% get_pipelines as pipe %}
+  	<h3>Lista de Procesos Disponibles</h3>
+        {% get_pipelines images as pipe %}
       
       
       <table class="table table-hover">
@@ -165,12 +170,21 @@ Seleccione una pestaña:
             <tr>
                <td>{{p.nombre}}</td>
                <td>{{p.tipo_imagen}}</td>
-                <td>{% if task_c %} {{task_c.0.estado}} {% else%} Aun no iniciado {% endif %}</td>
+                <td>{% if task_c %} {{task_c.0.estado}} {% else%} Sin iniciar {% endif %}</td>
                 
-               <td>{% if task_c %}  {% else%} 
+               <td>{% if task_c %} 
+                                          
+                       {% if task_c.0.estado == 'Finalizado'%}
+                           <form>
+                  <button class="btn btn-primary" formaction="{% url 'resultados' task_c.0.pk %}" title="Ver Resultados">Ver Resultados </button>
+                  
+                   </form>
+                       {% endif%} 
+                   {% else%} 
                    <form>
                   <button class="btn btn-primary" formaction="{% url 'run_pipeline' user.pk object.pk p.pk %}" title="Ejecutar"><i class="glyphicon glyphicon-log-in"></i></button>
-                </form>
+                  
+                   </form>
                    
                    {% endif %}</td>
                

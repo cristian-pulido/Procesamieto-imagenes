@@ -49,7 +49,10 @@ class Picture(models.Model):
         user_n=str(self.user.pk)
         img_name=str(self.pk)
 
-        folder=os.path.join(settings.MEDIA_ROOT,"user_"+user_n+"/img_"+img_name)
+        folder=os.path.join(settings.MEDIA_ROOT,"root/user_"+user_n+"/img_"+img_name)
+        shutil.rmtree(folder, ignore_errors=True)
+        
+        folder=os.path.join(settings.MEDIA_ROOT,"results/user_"+user_n+"/img_"+img_name)
         shutil.rmtree(folder, ignore_errors=True)
 
         super(Picture, self).delete(*args, **kwargs)

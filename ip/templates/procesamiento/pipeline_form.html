@@ -70,7 +70,7 @@
         <label for="id_dependencia">Dependencia:</label>
         <select name="dependencia" id="id_dependencia">
           <option value="" >---------</option>
-            {% get_pipelines as pipe %}
+            {% get_pipelines "" as pipe %}
           {% for p in pipe %}
                 <option value="{{p.pk}}" {% if object.dependencia.pk == p.pk %} selected {% endif %} >{{p}}</option>
             {% endfor %}

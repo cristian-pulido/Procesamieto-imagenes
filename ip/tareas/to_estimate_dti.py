@@ -38,12 +38,14 @@ for i in os.listdir(folder):
 print(d.separador + 'building DTI Model...')
 
 ref_name = utils.to_extract_filename(path_input)
+file_evecs=os.path.join(path_output,ref_name + d.id_evecs + d.extension)
+file_evals=os.path.join(path_output,ref_name + d.id_evals + d.extension)
 
-if (not (os.path.exists(path_output + ref_name + d.id_evecs + d.extension))) | (
-        not (os.path.exists(path_output + ref_name + d.id_evals + d.extension))):
+if (not (os.path.exists(file_evecs))) | (
+        not (os.path.exists(file_evals))):
     try:
-        os.remove(path_output + ref_name + d.id_evecs + d.extension)
-        os.remove(path_output + ref_name + d.id_evals + d.extension)
+        os.remove(file_evecs)
+        os.remove(file_evals)
     except:
         print("Unexpected error:", sys.exc_info()[0])
 
@@ -59,10 +61,10 @@ if (not (os.path.exists(path_output + ref_name + d.id_evecs + d.extension))) | (
     tensor_fitted = tensor_model.fit(data, mask)
 
     nib.save(nib.Nifti1Image(tensor_fitted.evecs.astype(np.float32), img.affine),
-             path_output + ref_name + d.id_evecs + d.extension)
+             file_evecs)
     nib.save(nib.Nifti1Image(tensor_fitted.evals.astype(np.float32), img.affine),
-             path_output + ref_name + d.id_evals + d.extension)
+             file_evals)
 
-print(path_output + ref_name + d.id_evecs + d.extension)
-print(path_output + ref_name + d.id_evals + d.extension)
+print(file_evecs)
+print(file_evals)
 print(path_input)

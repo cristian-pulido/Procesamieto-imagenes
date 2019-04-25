@@ -16,7 +16,7 @@ from dipy.denoise.noise_estimate import estimate_sigma
 from dipy.denoise.nlmeans import nlmeans
 print('    - running NonLocal Mean algoritm...')
 
-finalFileName = path_output + utils.to_extract_filename(path_input) + d.id_non_local_mean + d.extension
+finalFileName = os.path.join(path_output, utils.to_extract_filename(path_input) + d.id_non_local_mean + d.extension)
 
 if not (os.path.exists(finalFileName)):
     img = nib.load(path_input)

@@ -15,6 +15,26 @@ class Task(models.Model):
 
     def __str__(self):
         return '{}'.format(self.nombre)
+    
+class default_result(models.Model):
+
+    nombre=models.CharField(max_length=100)
+    task=models.ForeignKey(Task, on_delete=models.CASCADE)
+    word_key=models.CharField(max_length=100)
+    
+    imagen='Imagen'
+    grafica='Grafica'
+    text="Texto"
+    nii="Archivo nii"
+    trk="Archivo trk"
+    csv="Archivo csv"
+    ica="Ica Component"
+    g_ica="Ica Graph"
+    
+    tipo_choices=((imagen, u'Imagen'),(grafica, u'Grafica'),(text, u'Texto'),(nii, u'Archivo nii'),(trk, u'Archivo trk'),(csv, u'Archivo csv'),(ica, u'Ica Component'),(g_ica, u'Ica Graph'))
+    tipo=models.CharField(max_length=40, choices=tipo_choices, null=True)    
+    def __str__(self):
+        return '{}'.format(self.nombre)
 
 
 class Taskgroup(models.Model):
@@ -71,6 +91,28 @@ class task_celery(models.Model):
     
     def __str__(self):
         return 'imagen %s - proceso %s' % (self.imagen.pk,self.pipeline.nombre)
+    
+    
+class results(models.Model):
+
+    task_celery = models.ForeignKey(task_celery,on_delete=models.CASCADE,null=True)
+    nombre=models.CharField(max_length=100)
+    path = models.CharField(max_length=250)
+    
+    imagen='Imagen'
+    grafica='Grafica'
+    text="Texto"
+    nii="Archivo nii"
+    trk="Archivo trk"
+    csv="Archivo csv"
+    ica="Ica Component"
+    g_ica="Ica Graph"
+    
+    tipo_choices=((imagen, u'Imagen'),(grafica, u'Grafica'),(text, u'Texto'),(nii, u'Archivo nii'),(trk, u'Archivo trk'),(csv, u'Archivo csv'),(ica, u'Ica Component'),(g_ica, u'Ica Graph'))
+    tipo=models.CharField(max_length=40, choices=tipo_choices, null=True)
+    
+    def __str__(self):
+        return 'imagen:  %s - nombre: %s' % (self.task_celery.imagen.get_name(),self.nombre)
 
         
         

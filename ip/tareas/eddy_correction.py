@@ -20,12 +20,13 @@ ref_bo. kskskdejien skkd  dllkd
 Out:
 """
 ref_bo = '0'
-# print('    - running Eddy Correction...')
+print('    - running Eddy Correction...')
 
 
 refNameOnly = utils.to_extract_filename(path_input)
+final_name=os.path.join(path_output,refNameOnly + d.id_eddy_correct + d.extension)
 
-if not os.path.exists(path_output + utils.to_extract_filename(path_input) + d.id_eddy_correct + d.extension):
+if not os.path.exists(final_name):
     refName = utils.to_extract_filename_extention(path_input)
     path_temporal=os.path.join(path_output,"temp_eddy")
     os.mkdir(path_temporal)
@@ -33,4 +34,4 @@ if not os.path.exists(path_output + utils.to_extract_filename(path_input) + d.id
     fsl.eddy_correct(path_temporal +"/"+ refName, path_temporal +"/"+ refNameOnly + d.id_eddy_correct + '.nii', ref_bo)
     os.system('cp ' + os.path.join(path_temporal, refNameOnly + d.id_eddy_correct + d.extension) + ' ' + path_output)  # Copiamos archivo de difusion desde carpeta temporal
     shutil.rmtree(path_temporal)
-print(path_output + refNameOnly + d.id_eddy_correct + d.extension)
+print(final_name)

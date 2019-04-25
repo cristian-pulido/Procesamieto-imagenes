@@ -28,7 +28,7 @@ def run_pipeline(request,user_pk,img_pk,pipeline_pk):
         
         
         t_celery=task_celery.objects.create(user=user,imagen=picture,pipeline=pipeline,
-                                            estado="iniciado")
+                                            estado="Ejecutando")
         
         tarea=crear_tarea.delay(t_celery.pk)
         

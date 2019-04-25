@@ -57,33 +57,33 @@ if not os.path.exists(os.path.join(folder,"list_maps.txt")):
     print(d.separador + d.separador + 'computing of FA map')
     FA = fractional_anisotropy(evals)
     FA[np.isnan(FA)] = 0
-    nib.save(nib.Nifti1Image(FA.astype(np.float32), affine), path_output + ref_name_only + '_FA' + d.extension)
+    nib.save(nib.Nifti1Image(FA.astype(np.float32), affine), os.path.join(path_output, ref_name_only + '_FA' + d.extension))
 
-    list_maps.append(path_output + ref_name_only + '_FA' + d.extension)
+    list_maps.append(os.path.join(path_output,  ref_name_only + '_FA' + d.extension))
 
     print(d.separador + d.separador + 'computing of Color FA map')
     FA2 = np.clip(FA, 0, 1)
     RGB = color_fa(FA2, evecs)
     nib.save(nib.Nifti1Image(np.array(255 * RGB, 'uint8'), affine),
-             path_output + ref_name_only + '_FA_RGB' + d.extension)
+             os.path.join(path_output, ref_name_only + '_FA_RGB' + d.extension))
 
     print(d.separador + d.separador + 'computing of MD map')
     MD = dti.mean_diffusivity(evals)
-    nib.save(nib.Nifti1Image(MD.astype(np.float32), affine), path_output + ref_name_only + '_MD' + d.extension)
+    nib.save(nib.Nifti1Image(MD.astype(np.float32), affine), os.path.join(path_output,  ref_name_only + '_MD' + d.extension))
 
-    list_maps.append(path_output + ref_name_only + '_MD' + d.extension)
+    list_maps.append(os.path.join(path_output, ref_name_only + '_MD' + d.extension))
 
     print(d.separador + d.separador + 'computing of AD map')
     AD = dti.axial_diffusivity(evals)
-    nib.save(nib.Nifti1Image(AD.astype(np.float32), affine), path_output + ref_name_only + '_AD' + d.extension)
+    nib.save(nib.Nifti1Image(AD.astype(np.float32), affine), os.path.join(path_output ,ref_name_only + '_AD' + d.extension))
 
-    list_maps.append(path_output + ref_name_only + '_AD' + d.extension)
+    list_maps.append(os.path.join(path_output , ref_name_only + '_AD' + d.extension))
 
     print(d.separador + d.separador + 'computing of RD map')
     RD = dti.radial_diffusivity(evals)
-    nib.save(nib.Nifti1Image(RD.astype(np.float32), affine), path_output + ref_name_only + '_RD' + d.extension)
+    nib.save(nib.Nifti1Image(RD.astype(np.float32), affine), os.path.join(path_output, ref_name_only + '_RD' + d.extension))
 
-    list_maps.append(path_output + ref_name_only + '_RD' + d.extension)
+    list_maps.append(os.path.join(path_output , ref_name_only + '_RD' + d.extension))
 
     sphere = get_sphere('symmetric724')
     peak_indices = quantize_evecs(evecs, sphere.vertices)
@@ -98,7 +98,7 @@ if not os.path.exists(os.path.join(folder,"list_maps.txt")):
 
     tensor_streamlines_trk = ((sl, None, None) for sl in tensor_streamlines)
 
-    nib.trackvis.write(path_output + ref_name_only + '_tractography_EuDx.trk', tensor_streamlines_trk, hdr,
+    nib.trackvis.write(os.path.join(path_output, ref_name_only + '_tractography_EuDx.trk'), tensor_streamlines_trk, hdr,
                        points_space='voxel')
 
     print(list_maps)

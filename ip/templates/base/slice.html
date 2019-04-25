@@ -5,7 +5,7 @@
 {% block title %} Visualización {% endblock %}
 {% block content %}
 
-{% if not perms.validacion.can_ver_slice or object.user.pk != user.pk %}
+{% if not perms.validacion.can_ver_slice  or object.user.groups.all.0.pk != user.groups.all.0.pk %}
 <script type="text/javascript">
         window.location="{% url 'login' %}";
 </script>
@@ -13,7 +13,8 @@
 
 
 
-<h3> Visualizador de imágenes  {{object.get_name}} </h3>
+
+<h3> Nombre de estudio:  {{object.get_name}} </h3>
 
 
 <h4>Seleccione Imagen a Mostrar</h4>

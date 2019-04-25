@@ -34,8 +34,8 @@
 	
 
 		 <div class="container" style="text-align:left;">
-		 <p class="display-4">Usuario, {{ user.first_name }} {{ user.last_name }}</p>
-		 {{ user.groups.all.0  }}
+		 <p class="display-4">Usuario: {{ user.first_name|upper }} {{ user.last_name|upper }}</p>
+		 Grupo: {{ user.groups.all.0|upper }}
 	     {% load scripts %}
          {% load scripts_procesamiento %}
 	     {% creargrupos %}
@@ -63,24 +63,19 @@
 									<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 										<ul class="nav navbar-nav">
 											<li class="dropdown">
-                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Filtros Dicom <span class="caret"></span></a>
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Configuración<span class="caret"></span></a>
                                                 <ul class="dropdown-menu" role="menu">
-													
+                                                    <ol>Filtros Dicom</ol>
                                                     <li><a href="{% url 'filtro_crear' %}">Añadir</a></li>
 													
 													<li><a href="{% url 'filtro_listar' %}">Lista</a></li>
-                                                </ul>
-                                            </li>
-                                            <li class="dropdown">
-                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Pipelines <span class="caret"></span></a>
-                                                <ul class="dropdown-menu" role="menu">
-													
-                                                    <li><a href="#">Ejecutar</a></li>
+                                                    <li></li>
+                                                    <ol>Pipelines</ol>
+                                                    <li><a href="{% url 'multi_run' %}">Ejecutar</a></li>
                                                     <li><a href="{% url 'grupo_listar' %}">Lista Pipelines</a></li>
-													
-													
                                                 </ul>
                                             </li>
+                                            
 											
 											{% if user.is_staff %}
 											<li><a href="{% url 'reportes' %}">Reportes</a></li>

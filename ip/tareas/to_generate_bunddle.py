@@ -28,7 +28,7 @@ for l in os.listdir(folder_sujeto):
 
 
 #################
-if not os.path.exists(path_output+'feature.out'):
+if not os.path.exists(os.path.join(path_output,'feature.out')):
     list_path_atlas_1=[]
     with open(os.path.join(folder,"list_path_atlas_1.txt")) as f:
         for line in f:
@@ -113,7 +113,7 @@ if not os.path.exists(path_output+'feature.out'):
             else:
                 roi = roi | nib.load(atlas_dict[rule[0][0]][elementROI]).get_data().astype(bool)
 
-        nib.save(nib.Nifti1Image(roi.astype(np.float32), dwi_affine), path_output + 'roi_rule_' + str(ruleNumber) + '.nii.gz')
+        nib.save(nib.Nifti1Image(roi.astype(np.float32), dwi_affine),os.path.join( path_output , 'roi_rule_' + str(ruleNumber) + '.nii.gz'))
 
         seeds = utils.seeds_from_mask(roi, density=[2, 2, 2], affine=dwi_affine)
 
@@ -188,7 +188,7 @@ if not os.path.exists(path_output+'feature.out'):
 
             bunddleFiltered = bunddle
 
-        save_trk(path_output + 'bundle_rule_' + str(ruleNumber) + '.trk', bunddleFiltered, dwi_affine, roi.shape)
+        save_trk(os.path.join(path_output, 'bundle_rule_' + str(ruleNumber) + '.trk'), bunddleFiltered, dwi_affine, roi.shape)
 
         if 'roi' in locals():
             del roi
@@ -232,7 +232,7 @@ if not os.path.exists(path_output+'feature.out'):
                 features.append(np.max(data_map))
                 features.append(np.std(data_map))
 
-    np.savetxt(path_output + 'feature.out', np.array(features), delimiter=' ', fmt='%s')
+    np.savetxt(os.path.join(path_output, 'feature.out'), np.array(features), delimiter=' ', fmt='%s')
 
-print(path_output+'feature.out')
+print(os.path.join(path_output,'feature.out'))
 print(path_input)

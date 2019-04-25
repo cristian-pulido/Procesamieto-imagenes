@@ -10,7 +10,7 @@ def np2str(a):
     line = line[:-1] + "]"
     return line
 
-def grafics_plot(arrays, direccion, legends, Title, labelaxes, myDiv):
+def grafics_plot(arrays, direccion, legends, Title, labelaxes, myDiv,autosize=True):
     file = direccion
     f = open(file, "w+")
     traces = []
@@ -21,7 +21,14 @@ def grafics_plot(arrays, direccion, legends, Title, labelaxes, myDiv):
         f.write("name: '" + legends[i] + "', \n")
         f.write("type: 'scatter' \n };\n")
     f.write("var data = " + np2str(traces) + ";\n")
-    f.write("var layout = { \n title: '" + Title + "',\n 'titlefont': { \n 'size': 36, \n }, \n xaxis: { \n title: '" +
+    
+    size=""
+    size_title=36
+    if autosize==False:
+        size='\n autosize:false, \n height: 250, '
+        size_title=18
+    
+    f.write("var layout = { "+ size +"\n title: '" + Title + "',\n 'titlefont': { \n 'size': "+ str(size_title)+", \n }, \n xaxis: { \n title: '" +
             labelaxes[0] + "', \n  titlefont: { \n")
     f.write("family: 'Courier New, monospace', \n size: 18, \n color: '#7f7f7f' \n   } \n  }, \n ")
     f.write(" yaxis: { \n  title: '" + labelaxes[
@@ -63,7 +70,7 @@ def func_motion_correct(dir_func, dir_result, img_name, tipoimg):
     grafics_plot([abs_values, relative_values],
                  paths_html["desplazamiento"],
                  ["Absoluto", "Relativo"],
-                 "Desplazamiento Medio Imagen " + img_name,
+                 "Desplazamiento Medio",
                  ["Tiempo (volumenes)", "Distancia (mm)"],
                  "div_"+tipoimg+"_desplazamiento")
 
@@ -83,7 +90,7 @@ def func_motion_correct(dir_func, dir_result, img_name, tipoimg):
                  direccion=paths_html["traslaciones"],
                  legends=["x", "y", "z"],
                  Title="Traslaciones",
-                 labelaxes=["Tiempo (Volumenes)", "mm"],
+                 labelaxes=["Tiempo (Volumenes)", "Distancia (mm)"],
                  myDiv="div_" + tipoimg + "_traslaciones")
 
     shutil.rmtree(folder_temp)

@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'apps.procesamiento',
 
     'report_builder',
-
+    
+    
 
     'django.contrib.sites',
     'allauth',
@@ -164,5 +165,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = "none"
 SOCIALACCOUNT_QUERY_EMAIL = True
 
-CELERY_BROKER_URL = 'amqp://localhost'
+# CELERY_BROKER_URL = 'amqp://col2:col2@localhost:5672/image'
+
+# BROKER_URL = 'django://'
 

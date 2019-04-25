@@ -41,3 +41,14 @@ def get_archivos(pk):
     user=User.objects.get(pk=pk)
     P=Picture.objects.filter(user=user)
     return P
+
+@register.simple_tag
+def get_archivos_group(pk):
+    
+    user=User.objects.get(pk=pk)
+    group=user.groups.all()[0]
+    result=[]
+    for u in group.user_set.all():
+        if u != user:
+            result+=get_archivos(u.pk)
+    return result

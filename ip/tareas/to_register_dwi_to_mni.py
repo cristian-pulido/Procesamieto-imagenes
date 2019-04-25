@@ -27,7 +27,9 @@ for l in os.listdir(folder_sujeto):
 # def to_register_dwi_to_mni(path_in, path_out, path_bvec, path_bval):
 ref_name = utils.to_extract_filename(path_input)
 
-if not os.path.exists(path_output + ref_name + '_normalized' + d.extension):
+finalname=os.path.join(path_output,ref_name + '_normalized' + d.extension)
+
+if not os.path.exists(finalname ):
 
     img_DWI = nib.load(path_input)
     data_DWI = img_DWI.get_data()
@@ -66,9 +68,9 @@ if not os.path.exists(path_output + ref_name + '_normalized' + d.extension):
         directionWarped[:, :, :, gradientDirection] = mapping.transform(
             data_DWI[:, :, :, gradientDirection].astype(int), interpolation='nearest')
 
-    nib.save(nib.Nifti1Image(directionWarped, MNI_T2_affine), path_output + ref_name + '_normalized' + d.extension)
+    nib.save(nib.Nifti1Image(directionWarped, MNI_T2_affine), finalname)
 
-    affine = nib.load(path_output + ref_name + '_normalized' + d.extension).affine
+    affine = nib.load(finalname).affine
 
     list_path_atlas_1 = utils.registration_atlas_to(d.aan_atlas, path_output, affine, mapping)
     with open(os.path.join(path_output,"list_path_atlas_1.txt"), "w") as f:
@@ -88,7 +90,7 @@ if not os.path.exists(path_output + ref_name + '_normalized' + d.extension):
             f.write(str(s) +"\n")
 
 
-print(path_output + ref_name + '_normalized' + d.extension)
+print(finalname)
 print(path_input)
 
 
