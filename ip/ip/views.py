@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth.models import Group, Permission, User
 from apps.fileupload.models import Picture
-from apps.procesamiento.models import Task, Taskgroup, Pipeline, task_celery
+from apps.procesamiento.models import Task, Taskgroup, Pipeline, task_celery, config
 from apps.procesamiento.templatetags.scripts_procesamiento import crear_tarea
 
 
@@ -18,16 +18,15 @@ def carga(request):
     return render(request,'base/carga.html')
 
 
-def run_pipeline(request,user_pk,img_pk,pipeline_pk):
+def run_pipeline(request,user_pk,config_pk):
     if not request.user.is_authenticated:
         return redirect('login')
     else:
         user=User.objects.get(pk=user_pk)
-        picture=Picture.objects.get(pk=img_pk)
-        pipeline=Pipeline.objects.get(pk=pipeline_pk)
+        conf=config.objects.get(pk=config_pk)
         
         
-        t_celery=task_celery.objects.create(user=user,imagen=picture,pipeline=pipeline,
+        t_celery=task_celery.objects.create(user=user,configuracion=conf,
                                             estado="Ejecutando")
         
         tarea=crear_tarea.delay(t_celery.pk)

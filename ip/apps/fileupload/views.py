@@ -2,6 +2,7 @@
 import json
 import os, shutil
 from fileinput import filename
+from django.shortcuts import render
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -18,8 +19,16 @@ from django.contrib.auth.models import Group, Permission, User
 
 from apps.validacion.templatetags.scripts_validacion import proceso_inicial
 
+from apps.validacion.forms import SeleccionForm
+from apps.validacion.models import Imagenesdefecto, img_to_show
+
+from apps.fileupload.models import Picture
+
 import string
 import random
+
+import nibabel
+
 
 class PictureCreateView(CreateView):
     model = Picture
@@ -115,4 +124,94 @@ class PictureView(DetailView):
 class PictureViewImg(DetailView):
     model = Picture
     template_name = 'base/slice.html'
+    
+    
+def Select(request,pk):
+    form = SeleccionForm()
+    object = Picture.objects.get(pk=pk)
+    context={
+      'object':object,
+      'form': form,
+    }
+    
+    
+    
+    if request.method == "POST":
+        form = SeleccionForm(request.POST)
+        if form.is_valid():
+            data=form.cleaned_data
+            picture_pk=data['picture_pk']
+            lista=data['lista_img']
+            errores=[]
+            img_s=lista.split(',')[:-1]
+            
+            temporal={}
+            
+            for i in img_s:
+                img_pk,s_pk = i.split('_')
+                temporal[int(img_pk)]=int(s_pk)
+                img = img_to_show.objects.get(pk=img_pk)
+                s = Imagenesdefecto.objects.get(pk=s_pk)
+                
+                file_path=settings.MEDIA_ROOT+img.path[len('/media'):]
+                img_load=nibabel.load(file_path)
+                
+                if s.nombre == 'Estructural T1':
+                    
+                    
+                    if len(img_load.shape) != 3:
+                        errores.append("La imagen "+str(img)+" no puede ser Estructural T1 ya que no es 3-D")
+                        
+                if s.nombre == 'Funcional Resting':
+                
+                    if len(img_load.shape) <= 3:
+                        errores.append("La imagen "+str(img)+" no puede ser Funcional Resting ya que tiene menos de 4 Dimensiones")
+                        
+                if s.nombre == 'DWI':
+                    
+                    if len(img_load.shape) <= 3:
+                        errores.append("La imagen "+str(img)+" no puede ser del tipo DWI ya que tiene menos de 4 Dimensiones")
+                        
+                    if not os.path.exists(os.path.join(os.path.dirname(file_path),str(img)+".bvec" )):
+                        errores.append("La imagen "+str(img)+" no puede del tipo DWI no se encontro el archivo bvec asociado")
+                    if not os.path.exists(os.path.join(os.path.dirname(file_path),str(img)+".bval" )):
+                        errores.append("La imagen "+str(img)+" no puede del tipo DWI no se encontro el archivo bval asociado")
+                        
+                    
+                    
+                    
+                
+            if len(errores) > 0:
+                form = SeleccionForm()
+                context['error']=errores
+                return render(request, 'fileupload/seleccion.html',context)
+            else:
+                I=img_to_show.objects.filter(sujeto=str(picture_pk))
+                
+                
+                for img in I:
+                    
+                    if img.pk in temporal:
+                        s = Imagenesdefecto.objects.get(pk=temporal[img.pk])
+                        img.img_defecto = s
+                        img.save()
+                    else:
+                        img.img_defecto = None
+                        img.save()
+                        
+                P=Picture.objects.get(pk=picture_pk)
+                P.identificado = True
+                P.save()
+                        
+               
+                
+                
+                return redirect('picture',pk=picture_pk)
+                
+    
+    if request.method == "GET":
+        form = SeleccionForm()
+    
+    return render(request, 'fileupload/seleccion.html', context)
         
+    

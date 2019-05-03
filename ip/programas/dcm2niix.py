@@ -5,7 +5,7 @@ def convertir_dcm_2_nii(folder_dicom, folder_nii):
     ## ubicacion ejecutable dcm2niix
     print("Convirtiendo Dicom a Nifty ...")
     ejecutable = defi.path_dcm2niix
-    options = '-b y -z y -f %f_%p -o'  # Json, zipped, name folder_process
+    options = '-b y -z y -f %p -o'  # Json, zipped, name folder_process
     if len(os.listdir(folder_nii)) == 0:
         os.system(ejecutable + " " + options + " " + folder_nii + " " + folder_dicom)
     print("Finalizado")

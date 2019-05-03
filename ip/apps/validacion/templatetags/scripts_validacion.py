@@ -120,6 +120,7 @@ def get_camp_images_by_tag(nombre_tag,file):
 
 
 
+
 @shared_task
 def proceso_inicial(picture_pk):
 
@@ -173,6 +174,15 @@ def proceso_inicial(picture_pk):
             
 	folder_nii=os.path.join(base_dir,"nifty")
 	os.mkdir(folder_nii)
+    
+    
+
+	for i in os.listdir(folder_filter):
+		if "bvec" in i or "bval" in i:
+			shutil.copy(os.path.join(folder_filter,i),folder_nii)
+
+    
+    
     
 	for i in json_files:
 		with open(i,'r') as f:

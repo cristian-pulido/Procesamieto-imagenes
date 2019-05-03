@@ -12,7 +12,7 @@
 {% endif %}
 
 
-
+{% load scripts_validacion %}
 
 <h3> Nombre de estudio:  {{object.get_name}} </h3>
 
@@ -25,7 +25,7 @@
   
   <option value="" selected >-----------</option>
       {% for s in object.img_to_show_set.all %}
-        <option value="{{s.path}}">{{s.imagen}}</option>
+        <option value="{{s.path}}">{{ s }}</option>
     {% endfor%}
 </select>
 

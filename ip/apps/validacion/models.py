@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.auth.models import Group, Permission, User
 
 from apps.fileupload.models import Picture
+from django.conf import settings
+import os
 # Create your models here.
 
 
@@ -10,6 +12,15 @@ class Tipoimagenes(models.Model):
     nombre = models.CharField(max_length=75)
     nombre_aux = models.CharField(max_length=75,null=True,blank=True,default="")
     mostrar = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '{}'.format(self.nombre)
+    class ReportBuilder:
+        exclude = ('id', )  # Lists or tuple of excluded fields
+        
+        
+class Imagenesdefecto(models.Model):
+    nombre = models.CharField(max_length=75)
 
     def __str__(self):
         return '{}'.format(self.nombre)
@@ -98,14 +109,40 @@ class img_to_show(models.Model):
     sujeto = models.ForeignKey(Picture,on_delete=models.CASCADE)
     imagen = models.ForeignKey(Tipoimagenes,on_delete=models.CASCADE)
     path = models.CharField(max_length=300, null=True, blank=True)
+    img_defecto = models.ForeignKey(Imagenesdefecto,on_delete=models.CASCADE,null=True,blank=True)
+    
+
+
+    
+    
     
     
     def __str__(self):
-        return '{}'.format(self.sujeto.pk)
+        path=self.path
+        if ".nii.gz" in path:
+
+            return '{}'.format(os.path.basename(path)[:-len(".nii.gz")])
+        elif ".nii" in path:
+
+            return '{}'.format(os.path.basename(path)[:-len(".nii")])
+        else:
+            return '{}'.format(os.path.basename(path))
     class Meta:
+        ordering = ['path']
         permissions = (
             ("can_ver_slice", u"puede ver slice"),
 
-        )
+            )
     class ReportBuilder:
         exclude = ('id', )  # Lists or tuple of excluded fields
+        
+    def delete(self, *args, **kwargs):
+        """delete -- Remove to leave file."""
+
+        user_n=str(self.sujeto.user.pk)
+        img_name=str(self.sujeto.pk)
+        
+        file_path=settings.MEDIA_ROOT+self.path[len('/media'):]
+
+        os.remove(file_path)
+        super(img_to_show, self).delete(*args, **kwargs)

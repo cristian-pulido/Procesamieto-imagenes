@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 
@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, ListView, DeleteView
 
 from apps.validacion.forms import Campos_defectoForm
-from apps.validacion.models import Campos_defecto, Campostagimg
+from apps.validacion.models import Campos_defecto, Campostagimg, img_to_show
 from apps.validacion.templatetags.scripts_validacion import campos_a_mostrar
 
 
@@ -55,4 +55,10 @@ class Campos_defectoDelete(DeleteView):
     model = Campos_defecto
     template_name = 'validacion/eliminar_filtro.html'
     success_url = reverse_lazy('filtro_listar')
+    
+class img_to_show_Delete(DeleteView):
+    model = img_to_show
+    template_name = 'validacion/eliminar_img.html'
+    success_url = reverse_lazy('login')
+    
 

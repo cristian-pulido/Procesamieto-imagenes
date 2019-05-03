@@ -1,0 +1,101 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+{% load scripts_procesamiento %}
+{% load scripts_validacion %}
+{% load scripts %}
+
+<div class="container">
+    
+    <h3> Configuración Proceso: {{pipe}} </h3>
+    
+    {% if error %}
+
+    <div class="alert alert-dismissible alert-danger">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <h4 class="alert-heading">Error Encontrado</h4>
+        
+          <p class="mb-0">{{error}}</p>
+        
+    </div>
+
+    {% endif %}
+    
+    
+    <form name = "form"  method = "POST" >
+        {% csrf_token %}
+        
+              
+      {% filter_img_by_defect img tipo as filt %}
+        <label> Escoga la imagen tipo {{tipo}} </label>
+       <select name="check" onchange="llenar()" required>
+          <option value=""></option>
+          {% for i in filt %} 
+              <option value="{{i.pk}}">{{i}}</option>
+          {% endfor %}
+          
+        </select>   
+        
+        <br>
+        <br>
+        
+      
+        
+      {% filter_img_by_defect img as filt_t1 %}
+        <label> Escoga la imagen Estructural </label>
+       <select name="check" onchange="llenar()" required>
+          <option value=""></option>
+          {% for i in filt_t1 %} 
+              <option value="{{i.pk}}">{{i}}</option>
+          {% endfor %}
+          
+        </select>  
+
+      <br>
+      <button type = "submit" class="btn btn-primary" id="enviar"> Guardar </button> 
+        
+        
+        
+         
+      
+      <input type="text" name="entradas" maxlength="100" required id="id_entradas" hidden> 
+        
+      
+      <input type="text" name="pipeline_pk" maxlength="100" required id="id_pipeline_pk" value="{{pipe.pk}}" hidden>  
+         
+      
+      <input type="text" name="imagen_pk" maxlength="100" required id="id_imagen_pk" value="{{img.pk}}" hidden>  
+        
+        
+      </form>
+    <br>
+    <form>
+        <button  class="btn btn-danger" formaction="{% url 'picture' img.pk %}"> Cancelar </button> 
+    </form>
+
+</div>
+
+
+<script>
+    function llenar(){
+         
+         var lista="";
+         var x = document.getElementsByName("check");
+         for (i = 0; i < x.length; i++) {
+             if (x[i].value.length > 0){
+                
+                lista+=x[i].value+",";
+             }
+             
+         }
+         
+         document.getElementById("id_entradas").value=lista;
+     }
+        
+</script>    
+
+
+
+
+{% endblock %}

@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.urls import reverse_lazy
 # Create your views here.
 
-from apps.procesamiento.forms import gruposForm, PipelineForm, MultiForm
-from apps.procesamiento.models import Taskgroup, Task, Pipeline, task_celery
-from apps.validacion.models import Tipoimagenes
+from apps.procesamiento.forms import gruposForm, PipelineForm, MultiForm, configForm
+from apps.procesamiento.models import Taskgroup, Task, Pipeline, task_celery, config
+from apps.validacion.models import Tipoimagenes, Imagenesdefecto, img_to_show
+from apps.fileupload.models import Picture
 
 
 from django.views.generic import CreateView, UpdateView, ListView, DeleteView, DetailView
@@ -115,12 +116,61 @@ def Multi(request):
     
     return render(request, 'procesamiento/multi.html', {'form': form})
 
+def configView(request,pk_imagen,pk_pipe,pk_tipo):
     
+    form = configForm()
+    
+    img=Picture.objects.get(pk=pk_imagen)
+    pipe=Pipeline.objects.get(pk=pk_pipe)
+    tipo=Imagenesdefecto.objects.get(pk=pk_tipo)
+    
+    context={
+      'img':img,
+      'form': form,
+      'pipe':pipe,  
+      'tipo':tipo,  
+    }
+    
+    if request.method == "POST":
+        form = configForm(request.POST)
+        if form.is_valid():
+            data=form.cleaned_data
+            pipeline_pk=data['pipeline_pk']
+            imagen_pk=data['imagen_pk']
+            lista=data['entradas']
+            
+            tipo_pk, t1_pk = lista.split(',')[:-1]
+            
+        
+        
+            
+            n=len(config.objects.filter(entradas=(tipo_pk,t1_pk)))
+            
+            if n == 0 :
+                c=config.objects.create(pipeline=pipe,imagen=img)
+                c.entradas.add(tipo_pk,t1_pk)
+                c.save()
+                return redirect('picture',pk=pk_imagen)
+            
+            else:
+                error = "Ya existe esta Configuración"
+                context['error']=error
+            
+                form = configForm()
+                return render(request, 'procesamiento/config.html', context)
+    
+    if request.method == "GET":
+        form = configForm()
+    
+    return render(request, 'procesamiento/config.html', context)
+
     
 class resultados_list(DetailView):
 	model = task_celery
 	template_name = 'procesamiento/resultados.html'
 
+    
+    
 
     
        

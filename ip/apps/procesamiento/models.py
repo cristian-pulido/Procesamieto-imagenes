@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.validacion.models import Tipoimagenes
+from apps.validacion.models import Tipoimagenes, Imagenesdefecto, img_to_show
 from django.contrib.auth.models import Group, Permission, User
 from apps.fileupload.models import Picture
 # Create your models here.
@@ -11,7 +11,7 @@ class Task(models.Model):
     pathscript = models.CharField(max_length=150)
     dependencia = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, default=None, blank=True)
     habilitado = models.BooleanField(default=True)
-    tipo_imagen = models.ForeignKey(Tipoimagenes, on_delete=None)
+    tipo_imagen = models.ForeignKey(Imagenesdefecto, on_delete=None)
 
     def __str__(self):
         return '{}'.format(self.nombre)
@@ -42,7 +42,7 @@ class Taskgroup(models.Model):
     nombre=models.CharField(max_length=100)
     task=models.ManyToManyField(Task, blank=True)
     orden=models.CharField(max_length=200,null=True)
-    tipo_imagen = models.ForeignKey(Tipoimagenes, on_delete=models.CASCADE)
+    tipo_imagen = models.ForeignKey(Imagenesdefecto, on_delete=models.CASCADE)
     dependencia = models.ForeignKey('self',on_delete=models.SET_NULL,null=True,default=None,blank=True)
     eliminable = models.BooleanField(default=True)
     def __str__(self):
@@ -63,7 +63,8 @@ class Pipeline(models.Model):
     nombre=models.CharField(max_length=100)
     grupos=models.ManyToManyField(Taskgroup, blank=True)
     orden=models.CharField(max_length=200,null=True)
-    tipo_imagen = models.ForeignKey(Tipoimagenes, on_delete=models.CASCADE)
+    tipo_imagen = models.ForeignKey(Imagenesdefecto, on_delete=models.CASCADE)
+    
     dependencia = models.ForeignKey('self',on_delete=models.SET_NULL,null=True,default=None,blank=True)
     eliminable = models.BooleanField(default=True)
     def __str__(self):
@@ -78,19 +79,28 @@ class Pipeline(models.Model):
             groups.append(Taskgroup.objects.get(pk=int(i)))
             
         return groups
+    
+class config(models.Model):
+
+    entradas = models.ManyToManyField(img_to_show)
+    pipeline = models.ForeignKey(Pipeline,on_delete=models.CASCADE,null=True)
+    imagen = models.ForeignKey(Picture,on_delete=models.CASCADE,null=True)
+    
+    
+    def __str__(self):
+        return 'imagen %s - proceso %s' % (self.imagen.pk,self.pipeline.nombre)
         
         
 class task_celery(models.Model):
 
     id_task=models.CharField(max_length=200,default="",blank=True,null=True)
     user = models.ForeignKey(User,on_delete=models.CASCADE,null=True)
-    imagen = models.ForeignKey(Picture,on_delete=models.CASCADE,null=True)
-    pipeline = models.ForeignKey(Pipeline,on_delete=models.CASCADE,null=True)
+    configuracion = models.ForeignKey(config,on_delete=models.CASCADE,null=True)
     estado = models.CharField(max_length=100)
     
     
     def __str__(self):
-        return 'imagen %s - proceso %s' % (self.imagen.pk,self.pipeline.nombre)
+        return 'imagen %s - proceso %s' % (self.configuracion.imagen.pk,self.configuracion.pipeline.nombre)
     
     
 class results(models.Model):

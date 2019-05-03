@@ -1,0 +1,117 @@
+{% extends 'base/base.html' %}
+
+
+
+{% block title %} Seleccion Imágenes {% endblock %}
+{% block content %}
+
+{% if object.user.groups.all.0.pk != user.groups.all.0.pk %}
+<script type="text/javascript">
+        window.location="{% url 'login' %}";
+</script>
+{% endif %}
+
+{% load scripts %}
+{% load scripts_validacion %}
+
+
+{% if error %}
+
+<div class="alert alert-dismissible alert-danger">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <h4 class="alert-heading">Error Encontrado</h4>
+    {% for m in error %}
+      <p class="mb-0">{{m}}</p>
+    {% endfor %}
+</div>
+
+{% endif %}
+
+<h3> Nombre de estudio:  {{object.get_name}} </h3>
+
+
+<h4>Identificación de Imágenes Encontradas</h4>
+
+{% mostrarimgdefecto as img_def %}
+
+
+<p>Clasifique cada serie en {% for i in  img_def %} {{i}}
+    
+    {% if forloop.last %}
+        :
+    {% else %}
+        ,
+    {% endif %}
+    
+    {% endfor %}
+</p>
+
+
+
+<table>
+    <thead>
+        <tr>
+            <th> Nombre Imagen </th>
+            <th> Tipo </th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        {% for s in object.img_to_show_set.all %}
+            <tr>
+                <td>{{ s }}</td>
+                <td>
+                     <select name="check" onchange="llenar()">
+                      <option value=""></option>
+                      {% for i in img_def %}
+                          <option value="{{s.pk}}_{{i.pk}}"
+                                  {% if s.img_defecto.pk == i.pk %}
+                                  selected 
+                                  {% endif %}
+                                  >{{i}}</option>
+                      {% endfor%}
+                    </select> 
+                
+                </td>
+            </tr>
+        {% endfor%}
+    </tbody>
+</table>
+
+<div>
+<form name = "form"  method = "POST" >
+        {% csrf_token %}
+
+    <input type="text" name="lista_img" maxlength="500" required id="id_lista_img" hidden>    
+        
+        <input type="text" name="picture_pk" maxlength="100" required id="id_picture_pk" value={{object.pk}} hidden>
+    
+    
+    
+    <button type = "submit" class="btn btn-primary" id="enviar"> Guardar </button>
+</form>
+</div>
+
+<script>
+function llenar(){
+         
+         var lista="";
+         var x = document.getElementsByName("check");
+         for (i = 0; i < x.length; i++) {
+             if (x[i].value.length > 0){
+                
+                lista+=x[i].value+",";
+             }
+             
+         }
+         
+         document.getElementById("id_lista_img").value=lista;
+     }
+    
+llenar()
+</script>
+
+
+
+
+{% endblock %}

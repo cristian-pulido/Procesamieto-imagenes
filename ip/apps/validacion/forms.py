@@ -33,3 +33,8 @@ class Campos_defectoForm(forms.ModelForm):
             'medidas':forms.TextInput(attrs={'class': 'form-control', 'autocomplete': "off"}),
             'user': forms.HiddenInput(),
         }
+        
+        
+class SeleccionForm(forms.Form):
+    lista_img = forms.CharField(max_length = 500)
+    picture_pk = forms.CharField(max_length = 100)

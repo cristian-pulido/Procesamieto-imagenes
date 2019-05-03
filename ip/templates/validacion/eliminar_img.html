@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+
+{% if user.pk != object.sujeto.user.pk %}
+<script type="text/javascript">
+        window.location="{% url 'login' %}";
+</script>
+{% endif %}
+{% load scripts %}
+{% load scripts_validacion %}
+<center>
+<div class="container">
+    <form method="post">
+	    {% csrf_token %}
+	    <h3>¿Desea eliminar la imagen {% nombre_img object.path %}?</h3>
+
+
+	    <button class="btn btn-danger" type="submit">Sí, eliminar</button>
+	    <a class="btn btn-success" href="{% url 'picture' object.sujeto.pk %}">Cancelar</a>
+	</form>
+</div>
+</center>
+
+
+{% endblock %}

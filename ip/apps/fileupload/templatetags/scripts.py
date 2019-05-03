@@ -4,6 +4,7 @@ import shutil
 from django.contrib.auth.models import Group, Permission, User
 from django.conf import settings
 from apps.fileupload.models import Picture
+from apps.validacion.models import Imagenesdefecto
 
 register = template.Library()
 
@@ -33,6 +34,23 @@ def creargrupos():
 
 
     return ""
+
+@register.simple_tag
+def crearimgdefecto():
+    
+
+    # imagenes
+    t1 = Imagenesdefecto.objects.get_or_create(nombre="Estructural T1")
+    resting = Imagenesdefecto.objects.get_or_create(nombre="Funcional Resting")
+    dwi = Imagenesdefecto.objects.get_or_create(nombre="DWI")
+    
+    
+    return ""
+
+@register.simple_tag
+def mostrarimgdefecto():     
+    
+    return Imagenesdefecto.objects.all()
 
 
 @register.simple_tag

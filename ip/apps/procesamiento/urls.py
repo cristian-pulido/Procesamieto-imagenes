@@ -4,7 +4,7 @@ from django.conf.urls import url
 from django.urls import path
 from django.views.generic import TemplateView
 
-from apps.procesamiento.views import TaskgroupCreate, TaskgroupUpdate, TaskgroupList, TaskgroupDelete, PipelineCreate, PipelineUpdate, PipelineDelete, Multi, resultados_list
+from apps.procesamiento.views import TaskgroupCreate, TaskgroupUpdate, TaskgroupList, TaskgroupDelete, PipelineCreate, PipelineUpdate, PipelineDelete, Multi, resultados_list, configView
 
 
 urlpatterns = [
@@ -18,5 +18,6 @@ urlpatterns = [
 	url(r'^multi_run',Multi,name="multi_run"),
 
 	path('resultados/<int:pk>', resultados_list.as_view(), name='resultados'),    
+	path('config_new/<int:pk_imagen>/<int:pk_pipe>/<int:pk_tipo>',configView,name="config"),    
     
 ]

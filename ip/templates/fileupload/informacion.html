@@ -8,6 +8,15 @@
 </script>
 {% endif %}
 
+{% if not object.identificado  %}
+<script type="text/javascript">
+        window.location="{% url 'select' object.pk %}";
+</script>
+{% endif %}
+
+
+
+{% load scripts %}
 {% load scripts_validacion %}
 {% load scripts_procesamiento %}
 
@@ -21,6 +30,9 @@
 
 <ul class="nav nav-tabs">
   <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#series">Series</a>
+  </li>
+  <li class="nav-item">
     <a class="nav-link" data-toggle="tab" href="#tags">Tags Dicom</a>
   </li>
   {% if object.parametrosmotioncorrect %}
@@ -33,6 +45,38 @@
   </li>
 </ul>
 <div id="myTabContent" class="tab-content">
+  <div class="tab-pane fade" id="series">
+            
+      {% mostrarimgdefecto as img_def %}
+      
+      <table class="table table-hover">
+        <thead>
+            <tr>
+                <th> Nombre </th>
+                <th> Tipo </th>
+                <th> Eliminar </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for s in object.img_to_show_set.all %}
+                <tr>
+                    <td>{{ s }}</td>
+                    <td>{% if s.img_defecto %}{{s.img_defecto}}{%endif%}</td>
+                    <td>
+                    <form>
+                  <button class="btn btn-danger" formaction="{% url 'img_eliminar' s.pk %}" title="Eliminar"><i class="glyphicon glyphicon-trash"></i></button>
+                  
+                   </form>
+                    </td>
+                </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+      
+      
+  </div>
+    
   <div class="tab-pane fade" id="tags">
     <br>
     Series Encontradas en los archivos Dicom junto con sus parametros
@@ -147,52 +191,93 @@
     
   <div class="tab-pane fade  " id="ejecucion">
       
+      {% get_img_def_set object as img_defect %}
+      
       
     
   	<h3>Lista de Procesos Disponibles</h3>
-        {% get_pipelines images as pipe %}
+        {% get_pipelines img_defect as pipe %}
       
       
-      <table class="table table-hover">
-       <thead>
-           <tr>
-               <th>Nombre</th>
-               <th>Tipo Imagen</th>
-               <th>Estado</th>
-               <th>Acción</th>
-               
-           </tr>
-
-       </thead>
-        <tbody>
-            {% for p in pipe %}
-            {% get_estado_pipeline p object as task_c%}
-            <tr>
-               <td>{{p.nombre}}</td>
-               <td>{{p.tipo_imagen}}</td>
-                <td>{% if task_c %} {{task_c.0.estado}} {% else%} Sin iniciar {% endif %}</td>
-                
-               <td>{% if task_c %} 
-                                          
-                       {% if task_c.0.estado == 'Finalizado'%}
-                           <form>
-                  <button class="btn btn-primary" formaction="{% url 'resultados' task_c.0.pk %}" title="Ver Resultados">Ver Resultados </button>
-                  
-                   </form>
-                       {% endif%} 
-                   {% else%} 
+      <div class="container">
+      <ul class="nav nav-pills nav-stacked col-md-2">
+         {% for p in pipe %} 
+          <li ><a href="#pipe_{{p.pk}}" data-toggle="pill">{{p.nombre}}</a></li>
+         {% endfor %}        
+      </ul>
+      <div class="tab-content col-md-10">
+          
+          {% for p in pipe %} 
+          
+          <div class="tab-pane" id="pipe_{{p.pk}}">
+           
+           <h3>{{p.nombre}}</h3>
+           <ul>
+               <li>Tipo Imagen: {{p.tipo_imagen}} </li>
+               <li> 
                    <form>
-                  <button class="btn btn-primary" formaction="{% url 'run_pipeline' user.pk object.pk p.pk %}" title="Ejecutar"><i class="glyphicon glyphicon-log-in"></i></button>
+                  <button class="btn btn-success" formaction="{% url 'config' object.pk p.pk p.tipo_imagen.pk %}" title="Añadir"><i class="glyphicon glyphicon-plus"> Añadir Configuración </i></button>
+                  
+                   </form>    
+                   
+               
+               </li>
+                   
+           </ul>
+           <h4>Configuraciones Disponibles</h4>      
+              {% get_config object p as configs%}
+              <table class="table table-hover">
+              <thead>
+                  <tr>
+                      <th>Entradas</th>
+                      <th>Estado </th>
+                      <th>Acción</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for i in  configs %}
+                  <tr>
+                      <td> {% for j in i.entradas.all %}
+                          <ol> {{j}}</ol>
+                          {% endfor%}
+                      </td>
+                      <td>{% get_config_state i%} </td>
+                      <td>
+                          <form>
+                  <button class="btn btn-primary" formaction="{% url 'run_pipeline' user.pk i.pk %}" title="Ejecutar"><i class="glyphicon glyphicon-log-in"></i></button>
                   
                    </form>
-                   
-                   {% endif %}</td>
-               
-           </tr>
-            {% endfor %}
-        
-        </tbody>
-      </table>
+                      </td>
+                      
+                  </tr>   
+                  
+              
+                  {% endfor %}
+                  
+              </tbody>
+
+
+          </table>
+              
+              
+
+          </div>
+              
+          
+          
+         {% endfor %}
+          
+              
+      </div><!-- tab content -->
+      </div><!-- end of container -->
+
+      
+      
+      
+      
+      
+      
+
       
 
 

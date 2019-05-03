@@ -46,7 +46,7 @@ urlpatterns = [
     
     url(r'^visualizador', TemplateView.as_view(template_name='slicedrop/index.html'), name="visor"),
     
-    path('script/run_pipeline/<int:user_pk>/<int:img_pk>/<int:pipeline_pk>/', run_pipeline, name='run_pipeline'),
+    path('script/run_pipeline/<int:user_pk>/<int:config_pk>/', run_pipeline, name='run_pipeline'),
 ]
 
 

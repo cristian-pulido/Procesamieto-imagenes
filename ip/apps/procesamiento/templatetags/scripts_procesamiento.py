@@ -1,11 +1,11 @@
 from django import template
 from programas.dcm2niix import T1_path,DWI_path,rest_path
-from apps.validacion.models import Tipoimagenes
+from apps.validacion.models import Tipoimagenes, Imagenesdefecto
 from django.conf import settings
 from programas.definitions import results as result_path
 import os
 from apps.validacion.models import img_to_show
-from apps.procesamiento.models import Task, Taskgroup, Pipeline, task_celery
+from apps.procesamiento.models import Task, Taskgroup, Pipeline, task_celery, config
 from apps.procesamiento.models import default_result
 from apps.procesamiento.models import results
 import shutil
@@ -27,6 +27,23 @@ def get_task_for_images(img):
 @register.simple_tag
 def get_groups_for_images(img):
     return img.taskgroup_set.all()
+
+
+@register.simple_tag
+def get_img_def_set(picture):
+    
+    
+    I=picture.img_to_show_set.all()
+    
+    img_def=[]
+    
+    for i in I:
+        if i.img_defecto in img_def:
+            continue
+        else:
+            img_def.append(i.img_defecto)
+    
+    return img_def
 
 @register.simple_tag
 def get_img_with_tasks():
@@ -65,11 +82,37 @@ def can_run_pipeline(images,pipeline):
     else:
         False
         
+@register.simple_tag
+def filter_img_by_defect(img,tipo_defecto=None):
+    
+    if tipo_defecto: 
+    
+        return img.img_to_show_set.filter(img_defecto=tipo_defecto)
+    else:
+        tipo_defecto=Imagenesdefecto.objects.get(nombre="Estructural T1")
+        return img.img_to_show_set.filter(img_defecto=tipo_defecto)
+    
+    
+@register.simple_tag
+def get_config(img,pipeline):
+    
+    return config.objects.filter(imagen=img,pipeline=pipeline)
+
 
 @register.simple_tag
-def get_estado_pipeline(pipeline,img):
-        
-    return task_celery.objects.filter(imagen=img,pipeline=pipeline)
+def get_config_state(config):
+    
+    n = len (task_celery.objects.filter(configuracion=config))
+    
+    if n == 0 :
+          
+        return "Sin Iniciar"
+    else:
+        t=task_celery.objects.get(configuracion=config)
+        return t.estado
+    
+    
+
 
 @register.simple_tag
 def get_result_type(task,t):
@@ -78,7 +121,7 @@ def get_result_type(task,t):
 @register.simple_tag
 def tareas_defecto():
     
-    DWI=Tipoimagenes.objects.get_or_create(nombre="TENSOR  AXI")[0]
+    DWI=Imagenesdefecto.objects.get_or_create(nombre="DWI")[0]
     
     P=Pipeline.objects.filter(nombre="Pipeline Difusion",tipo_imagen=DWI)
     folder_tareas=os.path.join(settings.BASE_DIR,"tareas")
@@ -146,7 +189,7 @@ def tareas_defecto():
         P_DWI.orden=orden
         P_DWI.save()
         
-    REST=Tipoimagenes.objects.get_or_create(nombre="RESTING")[0]
+    REST=Imagenesdefecto.objects.get_or_create(nombre="Funcional Resting")[0]
     
     P_rest=Pipeline.objects.filter(nombre="Pipeline Resting",tipo_imagen=REST)
     
@@ -360,32 +403,55 @@ def crear_tarea(pk):
     if not os.path.exists(folder_user):
         os.mkdir(folder_user)
         
-    folder_img= os.path.join(folder_user,"img_"+str(t_celery.imagen.pk))
+    folder_img= os.path.join(folder_user,"img_"+str(t_celery.configuracion.imagen.pk))
     
     if not os.path.exists(folder_img):
         os.mkdir(folder_img)
         
-    folder_pipeline = os.path.join(folder_img,str(t_celery.pipeline.nombre.replace(" ","_")))
+    folder_pipeline = os.path.join(folder_img,str(t_celery.configuracion.pipeline.nombre.replace(" ","_")))
     
     if not os.path.exists(folder_pipeline):
         os.mkdir(folder_pipeline)
         
-    tareas=get_task_list(t_celery.pipeline)
-    organizar(tareas)
+    img_1 , img_2 =   t_celery.configuracion.entradas.all()  
+    
+    tipo1, tipo2 = img_1.img_defecto , img_2.img_defecto
+        
+    folder_config = os.path.join(folder_pipeline,"pk1_"+str(img_1.pk)+"_pk2_"+str(img_2.pk))
+    
+    if not os.path.exists(folder_config):
+        os.mkdir(folder_config)
+        
+    if t_celery.configuracion.pipeline.tipo_imagen == tipo1 :
+           
+        serie=img_1
+        t1 = img_2
+        
+    else:
+        
+        serie=img_2
+        t1 = img_1
     
     media=settings.MEDIA_ROOT
     
-    folder_nii=os.path.join(os.path.dirname(media+t_celery.imagen.file.name),"nifty")
-    
-    archives=[T1_path(folder_nii)]+DWI_path(folder_nii)+[rest_path(folder_nii)]
-    
-    for file in archives:
-        shutil.copy(file,folder_pipeline)
+    try:
+        shutil.copy(os.path.join(os.path.dirname(media+serie.path[len('/media'):]),
+                                 str(serie)+".bvec"),
+                    folder_config)
         
-    img=img_to_show.objects.get(sujeto=t_celery.imagen,imagen=t_celery.pipeline.tipo_imagen)
+        shutil.copy(os.path.join(os.path.dirname(media+serie.path[len('/media'):]),
+                                 str(serie)+".bval"),
+                    folder_config)
+    except:
+        print("no difusion")
     
-    path_in=os.path.join(folder_pipeline,os.path.basename(img.path))
+    path_in= shutil.copy(media+serie.path[len('/media'):],folder_config)
+    t1_path_new= shutil.copy(media+t1.path[len('/media'):],folder_config)
+        
     
+        
+    tareas=get_task_list(t_celery.configuracion.pipeline)
+    organizar(tareas)
     dic_tareas={}
     for i in range(len(tareas)):
             dic_tareas[i]=[str(tareas[i].nombre.replace(" ","_")),tareas[i].pathscript,[path_in]]

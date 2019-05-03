@@ -1,6 +1,6 @@
 from django import forms
 
-from apps.procesamiento.models import Taskgroup, Task, Pipeline
+from apps.procesamiento.models import Taskgroup, Task, Pipeline, config
 
 
     
@@ -78,3 +78,10 @@ class MultiForm(forms.Form):
     user = forms.CharField(max_length = 100)
     lista_img = forms.CharField(max_length = 500)
     pipeline_pk = forms.CharField(max_length = 100)
+    
+class configForm(forms.Form):
+    
+    entradas = forms.CharField(max_length = 100)
+    pipeline_pk = forms.CharField(max_length = 100)
+    imagen_pk = forms.CharField(max_length = 100)
+    
