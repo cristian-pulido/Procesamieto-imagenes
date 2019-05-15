@@ -1,6 +1,6 @@
 # encoding: utf-8
 from django.urls import path
-from apps.fileupload.views import PictureCreateView, PictureDeleteView, PictureListView, PictureView, PictureViewImg, Select
+from apps.fileupload.views import PictureCreateView, PictureDeleteView, PictureListView, PictureView, PictureViewImg, Select, edit_selection
 
 urlpatterns = [
     path('new/', PictureCreateView.as_view(), name='upload-new'),
@@ -9,5 +9,6 @@ urlpatterns = [
     path('informacion/<slug:pk>', PictureView.as_view(), name='picture'),
     path('visor/<slug:pk>', PictureViewImg.as_view(), name='img_to_show'),
     path('select/<slug:pk>',Select,name="select"),
+    path('select/<slug:pk>',edit_selection,name="edit_select"),
     
 ]

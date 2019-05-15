@@ -41,17 +41,19 @@
         <br>
         
       
+        {% if pipe.tipo_imagen.nombre != 'DWI' %}
         
       {% filter_img_by_defect img as filt_t1 %}
         <label> Escoga la imagen Estructural </label>
-       <select name="check" onchange="llenar()" required>
+       <select name="check" onchange="llenar()"  required >
           <option value=""></option>
           {% for i in filt_t1 %} 
               <option value="{{i.pk}}">{{i}}</option>
           {% endfor %}
           
         </select>  
-
+        
+        {% endif %}
       <br>
       <button type = "submit" class="btn btn-primary" id="enviar"> Guardar </button> 
         

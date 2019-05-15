@@ -122,7 +122,7 @@ class results(models.Model):
     tipo=models.CharField(max_length=40, choices=tipo_choices, null=True)
     
     def __str__(self):
-        return 'imagen:  %s - nombre: %s' % (self.task_celery.imagen.get_name(),self.nombre)
+        return 'imagen:  %s - nombre: %s' % (self.task_celery.configuracion.imagen.get_name(),self.nombre)
 
         
         

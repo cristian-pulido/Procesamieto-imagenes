@@ -1,0 +1,118 @@
+{
+    "groups": [
+        {
+            "name": "Group_00001",
+            "procs": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+            ],
+            "total": 9
+        }
+    ],
+    "links": [
+        {
+            "source": 0,
+            "target": 1,
+            "value": 1
+        },
+        {
+            "source": 1,
+            "target": 2,
+            "value": 1
+        },
+        {
+            "source": 2,
+            "target": 3,
+            "value": 1
+        },
+        {
+            "source": 3,
+            "target": 4,
+            "value": 1
+        },
+        {
+            "source": 4,
+            "target": 5,
+            "value": 1
+        },
+        {
+            "source": 5,
+            "target": 6,
+            "value": 1
+        },
+        {
+            "source": 6,
+            "target": 7,
+            "value": 1
+        },
+        {
+            "source": 7,
+            "target": 8,
+            "value": 1
+        }
+    ],
+    "maxN": 9,
+    "nodes": [
+        {
+            "group": 1,
+            "name": "0_eddy_correction",
+            "report": "/tmp/tmpgdsq_sry/05_08_19/eddy_correction/_report/report.rst",
+            "result": "/tmp/tmpgdsq_sry/05_08_19/eddy_correction/result_eddy_correction.pklz"
+        },
+        {
+            "group": 1,
+            "name": "1_Non_Local_Mean",
+            "report": "/tmp/tmp5sleezkg/05_08_19/Non_Local_Mean/_report/report.rst",
+            "result": "/tmp/tmp5sleezkg/05_08_19/Non_Local_Mean/result_Non_Local_Mean.pklz"
+        },
+        {
+            "group": 1,
+            "name": "2_Reslicing",
+            "report": "/tmp/tmp8bra0t61/05_08_19/Reslicing/_report/report.rst",
+            "result": "/tmp/tmp8bra0t61/05_08_19/Reslicing/result_Reslicing.pklz"
+        },
+        {
+            "group": 1,
+            "name": "3_Bet_DWI",
+            "report": "/tmp/tmpctmhb143/05_08_19/Bet_DWI/_report/report.rst",
+            "result": "/tmp/tmpctmhb143/05_08_19/Bet_DWI/result_Bet_DWI.pklz"
+        },
+        {
+            "group": 1,
+            "name": "4_To_register_dwi_to_MNI",
+            "report": "/tmp/tmpdki5u660/05_08_19/To_register_dwi_to_MNI/_report/report.rst",
+            "result": "/tmp/tmpdki5u660/05_08_19/To_register_dwi_to_MNI/result_To_register_dwi_to_MNI.pklz"
+        },
+        {
+            "group": 1,
+            "name": "5_To_estimate_dti",
+            "report": "/tmp/tmplosfoku4/05_08_19/To_estimate_dti/_report/report.rst",
+            "result": "/tmp/tmplosfoku4/05_08_19/To_estimate_dti/result_To_estimate_dti.pklz"
+        },
+        {
+            "group": 1,
+            "name": "6_To_estimate_dti_maps",
+            "report": "/tmp/tmpq040regs/05_08_19/To_estimate_dti_maps/_report/report.rst",
+            "result": "/tmp/tmpq040regs/05_08_19/To_estimate_dti_maps/result_To_estimate_dti_maps.pklz"
+        },
+        {
+            "group": 1,
+            "name": "7_To_Generate_Bunddle",
+            "report": "/tmp/tmpdroqao5h/05_08_19/To_Generate_Bunddle/_report/report.rst",
+            "result": "/tmp/tmpdroqao5h/05_08_19/To_Generate_Bunddle/result_To_Generate_Bunddle.pklz"
+        },
+        {
+            "group": 1,
+            "name": "8_To_Generate_Tractography",
+            "report": "/tmp/tmp3ms68ich/05_08_19/To_Generate_Tractography/_report/report.rst",
+            "result": "/tmp/tmp3ms68ich/05_08_19/To_Generate_Tractography/result_To_Generate_Tractography.pklz"
+        }
+    ]
+}

@@ -214,4 +214,11 @@ def Select(request,pk):
     
     return render(request, 'fileupload/seleccion.html', context)
         
+def edit_selection(request,picture_pk):
+    
+    picture = Picture.objects.get(pk=pk)  
+    picture.identificado = False
+    picture.save()
+    
+    return Select(request,picture_pk)
     

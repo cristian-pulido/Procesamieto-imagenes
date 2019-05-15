@@ -398,7 +398,7 @@ def crear_tarea(pk):
     if not os.path.exists(result_path):
         os.mkdir(result_path)
         
-    folder_user= os.path.join(result_path,"user_"+str(t_celery.user.pk))
+    folder_user= os.path.join(result_path,"user_"+str(t_celery.configuracion.imagen.user.pk))
     
     if not os.path.exists(folder_user):
         os.mkdir(folder_user)
@@ -413,11 +413,22 @@ def crear_tarea(pk):
     if not os.path.exists(folder_pipeline):
         os.mkdir(folder_pipeline)
         
-    img_1 , img_2 =   t_celery.configuracion.entradas.all()  
+    if t_celery.configuracion.pipeline.tipo_imagen.nombre != 'DWI':    
+        img_1 , img_2 =   t_celery.configuracion.entradas.all()  
     
-    tipo1, tipo2 = img_1.img_defecto , img_2.img_defecto
+        tipo1, tipo2 = img_1.img_defecto , img_2.img_defecto
         
-    folder_config = os.path.join(folder_pipeline,"pk1_"+str(img_1.pk)+"_pk2_"+str(img_2.pk))
+        folder_config = os.path.join(folder_pipeline,"pk1_"+str(img_1.pk)+"_pk2_"+str(img_2.pk))
+        
+    else:
+        
+        img_1  =   t_celery.configuracion.entradas.all()[0]  
+    
+        tipo1 = img_1.img_defecto 
+        
+        folder_config = os.path.join(folder_pipeline,"pk1_"+str(img_1.pk))
+        
+        
     
     if not os.path.exists(folder_config):
         os.mkdir(folder_config)
@@ -425,7 +436,8 @@ def crear_tarea(pk):
     if t_celery.configuracion.pipeline.tipo_imagen == tipo1 :
            
         serie=img_1
-        t1 = img_2
+        if t_celery.configuracion.pipeline.tipo_imagen.nombre != 'DWI':   
+            t1 = img_2
         
     else:
         
@@ -446,7 +458,8 @@ def crear_tarea(pk):
         print("no difusion")
     
     path_in= shutil.copy(media+serie.path[len('/media'):],folder_config)
-    t1_path_new= shutil.copy(media+t1.path[len('/media'):],folder_config)
+    if t_celery.configuracion.pipeline.tipo_imagen.nombre != 'DWI':
+        t1_path_new= shutil.copy(media+t1.path[len('/media'):],folder_config)
         
     
         
@@ -455,7 +468,7 @@ def crear_tarea(pk):
     dic_tareas={}
     for i in range(len(tareas)):
             dic_tareas[i]=[str(tareas[i].nombre.replace(" ","_")),tareas[i].pathscript,[path_in]]
-    path_in=run_pipeline(datetime.datetime.now().strftime("%x").replace("/","_"),dic_tareas,folder_pipeline)
+    path_in=run_pipeline(datetime.datetime.now().strftime("%x").replace("/","_"),dic_tareas,folder_config)
     
     if path_in == "error":
         t_celery.estado="Finalizado con Error"

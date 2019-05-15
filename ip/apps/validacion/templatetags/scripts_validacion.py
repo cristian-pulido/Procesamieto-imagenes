@@ -149,78 +149,83 @@ def proceso_inicial(picture_pk):
 
 
 	series=get_tags_dicom(folder_dicom)
-	pass_tags_to_db(picture_pk,series)
-	campos_a_mostrar(picture.user.pk)
+	if len(series) == 0 :
+		picture.no_dicom = True
+		picture.save()   
 
-	folder_filter = os.path.join(base_dir, "filter")
-	os.mkdir(folder_filter)
-	convertir_dcm_2_nii(folder_dicom, folder_filter)
+	else:
+		pass_tags_to_db(picture_pk,series)
+		campos_a_mostrar(picture.user.pk)
 
-	zip_name = os.path.join(base_dir, "img_"+str(picture_pk)+"_dicom")
-	carpeta = folder_dicom
-	shutil.make_archive(zip_name, 'zip', carpeta)
-	shutil.rmtree(folder_dicom)
+		folder_filter = os.path.join(base_dir, "filter")
+		os.mkdir(folder_filter)
+		convertir_dcm_2_nii(folder_dicom, folder_filter)
 
-
-	carpeta = folder_filter
-	shutil.make_archive(os.path.splitext(file_path)[0], 'zip', carpeta)
-    
-	tipo_images=series.keys()
-    
-	json_files=[]
-	for i in os.listdir(folder_filter):
-		if "json" in i:
-			json_files.append(os.path.join(folder_filter,i))
-            
-	folder_nii=os.path.join(base_dir,"nifty")
-	os.mkdir(folder_nii)
-    
-    
-
-	for i in os.listdir(folder_filter):
-		if "bvec" in i or "bval" in i:
-			shutil.copy(os.path.join(folder_filter,i),folder_nii)
-
-    
-    
-    
-	for i in json_files:
-		with open(i,'r') as f:
-			data_json=json.load(f)
-		tipo_img=data_json['SeriesDescription']
-		new_path=shutil.copy(os.path.splitext(i)[0]+".nii.gz",folder_nii)
-		img_to_show.objects.create(sujeto=picture,
-                                   imagen=Tipoimagenes.objects.get_or_create(nombre=tipo_img)[0],
-                                   path=new_path[len(settings.MEDIA_ROOT[:-6]):])
-        
-	shutil.rmtree(folder_filter)
+		zip_name = os.path.join(base_dir, "img_"+str(picture_pk)+"_dicom")
+		carpeta = folder_dicom
+		shutil.make_archive(zip_name, 'zip', carpeta)
+		shutil.rmtree(folder_dicom)
 
 
-	try:        
-		func_result=os.path.join(folder_nii, "func_result")
-		absolute_func, relative_func , paths_html_func= func_motion_correct(rest_path(folder_nii),
-                                                                            func_result,picture.get_name(),"func")
-		os.remove(rest_path(folder_nii))
-		shutil.move(rest_path(func_result), folder_nii)
+		carpeta = folder_filter
+		shutil.make_archive(os.path.splitext(file_path)[0], 'zip', carpeta)
 
-		archive=rest_path(folder_nii)
+		tipo_images=series.keys()
+
+		json_files=[]
+		for i in os.listdir(folder_filter):
+			if "json" in i:
+				json_files.append(os.path.join(folder_filter,i))
+
+		folder_nii=os.path.join(base_dir,"nifty")
+		os.mkdir(folder_nii)
 
 
-		P = Parametrosmotioncorrect.objects.create(imagen=picture,
-                                                   absolute_func=absolute_func,
-                                                   relative_func=relative_func,
-                                                   graphic_desplazamiento_func=paths_html_func["desplazamiento"],
-                                                   graphic_rotacion_func=paths_html_func["rotaciones"],
-                                                   graphic_traslacion_func= paths_html_func["traslaciones"])
-		P.save()
-        
-	except:
-		print("")
-            
-	picture.anonimo = True
 
-	picture.save()    
-    
+		for i in os.listdir(folder_filter):
+			if "bvec" in i or "bval" in i:
+				shutil.copy(os.path.join(folder_filter,i),folder_nii)
+
+
+
+
+		for i in json_files:
+			with open(i,'r') as f:
+				data_json=json.load(f)
+			tipo_img=data_json['SeriesDescription']
+			new_path=shutil.copy(os.path.splitext(i)[0]+".nii.gz",folder_nii)
+			img_to_show.objects.create(sujeto=picture,
+                                       imagen=Tipoimagenes.objects.get_or_create(nombre=tipo_img)[0],
+                                       path=new_path[len(settings.MEDIA_ROOT[:-6]):])
+
+		shutil.rmtree(folder_filter)
+
+
+		try:        
+			func_result=os.path.join(folder_nii, "func_result")
+			absolute_func, relative_func , paths_html_func= func_motion_correct(rest_path(folder_nii),
+                                                                                func_result,picture.get_name(),"func")
+			os.remove(rest_path(folder_nii))
+			shutil.move(rest_path(func_result), folder_nii)
+
+			archive=rest_path(folder_nii)
+
+
+			P = Parametrosmotioncorrect.objects.create(imagen=picture,
+                                                       absolute_func=absolute_func,
+                                                       relative_func=relative_func,
+                                                       graphic_desplazamiento_func=paths_html_func["desplazamiento"],
+                                                       graphic_rotacion_func=paths_html_func["rotaciones"],
+                                                       graphic_traslacion_func= paths_html_func["traslaciones"])
+			P.save()
+
+		except:
+			print("")
+
+		picture.anonimo = True
+
+		picture.save()    
+
 	return "completo"
 
 

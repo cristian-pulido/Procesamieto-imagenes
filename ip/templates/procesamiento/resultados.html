@@ -17,7 +17,7 @@
 {% load scripts %}
 
 <center>
-<h2>Nombre del Estudio: {{object.pipeline}} </h2>
+<h2>Nombre del Estudio: {{object.configuracion.pipeline}} con las entradas: {% for i in object.configuracion.entradas.all%} <ol>{{i}}</ol> {% endfor %}</h2>
 </center>
 
 

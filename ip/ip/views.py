@@ -18,6 +18,7 @@ def carga(request):
     return render(request,'base/carga.html')
 
 
+
 def run_pipeline(request,user_pk,config_pk):
     if not request.user.is_authenticated:
         return redirect('login')

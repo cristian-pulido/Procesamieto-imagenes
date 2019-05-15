@@ -19,9 +19,9 @@ from dipy.core.gradients import gradient_table
 ###################
 folder_sujeto=path_output
 for l in os.listdir(folder_sujeto):
-    if "TENSOR" in l and "bval" in l:
+    if "bval" in l:
         fbval=os.path.join(folder_sujeto,l)
-    if "TENSOR" in l and "bvec" in l:
+    if "bvec" in l:
         fbvec=os.path.join(folder_sujeto,l)
 
 

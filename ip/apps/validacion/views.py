@@ -62,3 +62,5 @@ class img_to_show_Delete(DeleteView):
     success_url = reverse_lazy('login')
     
 
+    
+

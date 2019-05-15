@@ -22,6 +22,7 @@ class Picture(models.Model):
     user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     group = models.ForeignKey(Group,on_delete=models.SET_NULL,null=True)
     anonimo = models.BooleanField(default=False)
+    no_dicom = models.BooleanField(default=False)
     identificado = models.BooleanField(default=False)
 
 

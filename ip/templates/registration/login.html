@@ -79,9 +79,10 @@ window.location="{% url 'lista' %}";
 </ul>
 </form>
 <div >
+{% load staticfiles %}
 
 <a id="google_login" href="/accounts/google/login">
-	<img src="/media/google_signin_buttons/web/2x/btn_google_signin_dark_focus_web@2x.png" border="0" width="100%">
+	<img src="{% static 'google_signin_buttons/web/2x/btn_google_signin_dark_focus_web@2x.png' %}" border="0" width="100%">
 	
 </a>
 

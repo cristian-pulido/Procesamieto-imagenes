@@ -53,13 +53,37 @@
   	{% for item in archivos %}
     
     <tr class="table-primary">
-      {% if item.anonimo == True %}
-      <td style="vertical-align: middle;">
-        <form>
-          <button class="btn btn-link enabled" formaction="{% url 'picture' item.pk%}" title="Ver información">{{ forloop.counter }}
+      {% if item.no_dicom == True %}  
+        <td style="vertical-align: middle;">
+            <form>
+          <button class="btn btn-link enabled" formaction="#" title="No se encontro archivos DICOM">{{ forloop.counter }}
           </button>
         </form>
-      </td>
+        </td>
+      
+      {% elif not item.identificado  %}  
+            {% if item.user.pk == user.pk  %}
+                <td style="vertical-align: middle;">
+                <form>
+                  <button class="btn btn-link enabled" formaction="{% url 'picture' item.pk%}" title="Ver información">{{ forloop.counter }}
+                  </button>
+                </form>
+              </td>
+            {% else %}
+                <td style="vertical-align: middle;">
+                <form>
+                  <button class="btn btn-link enabled" formaction="#" title="Falta Clasificación de Imágenes por el propietario">{{ forloop.counter }}
+                  </button>
+                </form>
+              </td>
+            {% endif%}
+      {% elif item.identificado  %}  
+        <td style="vertical-align: middle;">
+                <form>
+                  <button class="btn btn-link enabled" formaction="{% url 'picture' item.pk%}" title="Ver información">{{ forloop.counter }}
+                  </button>
+                </form>
+              </td>
       {% else %}
       <td style="vertical-align: middle;">
         <form>
@@ -116,13 +140,37 @@
   	{% for item in archivos_group %}
     
     <tr class="table-primary">
-      {% if item.anonimo == True %}
-      <td style="vertical-align: middle;">
-        <form>
-          <button class="btn btn-link enabled" formaction="{% url 'picture' item.pk%}" title="Ver información">{{ forloop.counter }}
+      {% if item.no_dicom == True %}  
+        <td style="vertical-align: middle;">
+            <form>
+          <button class="btn btn-link enabled" formaction="#" title="No se encontro archivos DICOM">{{ forloop.counter }}
           </button>
         </form>
-      </td>
+        </td>
+      
+      {% elif not item.identificado  %}  
+            {% if item.user.pk == user.pk  %}
+                <td style="vertical-align: middle;">
+                <form>
+                  <button class="btn btn-link enabled" formaction="{% url 'picture' item.pk%}" title="Ver información">{{ forloop.counter }}
+                  </button>
+                </form>
+              </td>
+            {% else %}
+                <td style="vertical-align: middle;">
+                <form>
+                  <button class="btn btn-link enabled" formaction="#" title="Falta Clasificación de Imágenes por el propietario">{{ forloop.counter }}
+                  </button>
+                </form>
+              </td>
+            {% endif%}
+      {% elif item.identificado  %}  
+        <td style="vertical-align: middle;">
+                <form>
+                  <button class="btn btn-link enabled" formaction="{% url 'picture' item.pk%}" title="Ver información">{{ forloop.counter }}
+                  </button>
+                </form>
+              </td>
       {% else %}
       <td style="vertical-align: middle;">
         <form>

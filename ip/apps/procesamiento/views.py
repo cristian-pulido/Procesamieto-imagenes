@@ -139,16 +139,23 @@ def configView(request,pk_imagen,pk_pipe,pk_tipo):
             imagen_pk=data['imagen_pk']
             lista=data['entradas']
             
-            tipo_pk, t1_pk = lista.split(',')[:-1]
+            if pipe.tipo_imagen.nombre != 'DWI':
             
-        
-        
+                tipo_pk, t1_pk = lista.split(',')[:-1]
             
-            n=len(config.objects.filter(entradas=(tipo_pk,t1_pk)))
+                n=len(config.objects.filter(entradas=(tipo_pk,t1_pk)))
+                
+            else:
+                tipo_pk = lista.split(',')[:-1][0]
+                
+                n=len(config.objects.filter(entradas=tipo_pk))
             
             if n == 0 :
                 c=config.objects.create(pipeline=pipe,imagen=img)
-                c.entradas.add(tipo_pk,t1_pk)
+                if pipe.tipo_imagen.nombre != 'DWI':
+                    c.entradas.add(tipo_pk,t1_pk)
+                else:
+                    c.entradas.add(tipo_pk)
                 c.save()
                 return redirect('picture',pk=pk_imagen)
             

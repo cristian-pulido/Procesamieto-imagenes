@@ -9,9 +9,16 @@
 {% endif %}
 
 {% if not object.identificado  %}
-<script type="text/javascript">
-        window.location="{% url 'select' object.pk %}";
-</script>
+    {% if object.user.pk == user.pk  %}
+    <script type="text/javascript">
+            window.location="{% url 'select' object.pk %}";
+    </script>
+    {% else %}
+    <script type="text/javascript">
+            window.location="{% url 'login' %}";
+    </script>
+
+    {% endif %}
 {% endif %}
 
 
@@ -46,6 +53,14 @@
 </ul>
 <div id="myTabContent" class="tab-content">
   <div class="tab-pane fade" id="series">
+      <br>
+      {% if object.user.pk == user.pk  %}
+      <form>
+      <button class="btn btn-default" formaction="{% url 'edit_select' object.pk %}" title="Editar"><i class="glyphicon glyphicon-pencil"></i> Editar Selección </button>
+
+       </form> 
+      {% endif %}
+   
             
       {% mostrarimgdefecto as img_def %}
       
@@ -54,7 +69,9 @@
             <tr>
                 <th> Nombre </th>
                 <th> Tipo </th>
+                {% if object.user.pk == user.pk %}
                 <th> Eliminar </th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -63,12 +80,14 @@
                 <tr>
                     <td>{{ s }}</td>
                     <td>{% if s.img_defecto %}{{s.img_defecto}}{%endif%}</td>
+                    {% if object.user.pk == user.pk %}
                     <td>
                     <form>
                   <button class="btn btn-danger" formaction="{% url 'img_eliminar' s.pk %}" title="Eliminar"><i class="glyphicon glyphicon-trash"></i></button>
                   
                    </form>
                     </td>
+                    {% endif %}
                 </tr>
             {% endfor%}
         </tbody>
@@ -236,17 +255,28 @@
               </thead>
               <tbody>
                   {% for i in  configs %}
+                  {% get_config_state i as state %}
                   <tr>
                       <td> {% for j in i.entradas.all %}
                           <ol> {{j}}</ol>
                           {% endfor%}
                       </td>
-                      <td>{% get_config_state i%} </td>
+                      <td> {{state}}</td>
                       <td>
+                          {% if state == 'Sin Iniciar'%}
                           <form>
                   <button class="btn btn-primary" formaction="{% url 'run_pipeline' user.pk i.pk %}" title="Ejecutar"><i class="glyphicon glyphicon-log-in"></i></button>
                   
                    </form>
+                          {% elif state == 'Finalizado'%}
+                          <form>
+                  <button class="btn btn-primary" formaction="{% url 'resultados' i.task_celery_set.all.0.pk %}" title="Ver Resultados">Resultados</button>
+                  
+                   </form>
+                          {% else %}
+                          
+                          {% endif %}
+                          
                       </td>
                       
                   </tr>   
