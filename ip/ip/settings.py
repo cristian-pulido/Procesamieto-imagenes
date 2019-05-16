@@ -25,7 +25,7 @@ SECRET_KEY = 'k#$v0$5o^dkp$kz&yar#g!=@vltuayz58@4b@e(-^@*!tm(kkr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['fucs-cimca.fucsalud.edu.co','172.17.29.27']
+ALLOWED_HOSTS = ['fucs-cimca.fucsalud.edu.co','172.17.29.27','localhost']
 
 
 # Application definition
@@ -138,14 +138,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/home/colciencias/IP/static'
+STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)),'static')#'/home/colciencias/IP/static'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/home/colciencias/IP/media'
+MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)),'media')#'/home/colciencias/IP/media'
 
 AUTHENTICATION_BACKENDS = (
     # Default backend -- used to login by username in Django admin

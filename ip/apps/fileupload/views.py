@@ -59,7 +59,9 @@ class PictureCreateView(CreateView):
         self.object.save()
 
         media=settings.MEDIA_ROOT
-        
+
+        if not os.path.exists(media):
+            os.mkdir(media)
         folder_root=os.path.join(media,"root")
         
         if not os.path.exists(folder_root):

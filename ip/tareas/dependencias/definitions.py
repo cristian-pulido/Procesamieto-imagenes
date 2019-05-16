@@ -9,7 +9,7 @@ morel_atlas = '/home/runlab/data/Atlas/1mm/ThalamicNucleiMorelAtlas.nii'
 harvard_oxford_cort_atlas = '/home/runlab/data/Atlas/1mm/HarvardOxfordCort.nii'
 hypothalamus_atlas = '/home/runlab/data/Atlas/1mm/Hypothalamus.nii'
 
-standard_t2 = os.path.join(os.environ['FSLDIR'], 'data/standard/MNI152_T2_1mm_brain.nii.gz')
+standard_t2 = os.path.join(os.environ['FSLDIR'], 'data/standard/MNI152_T1_1mm_brain.nii.gz')
 standard_t1 = os.path.join(os.environ['FSLDIR'], 'data/standard/MNI152_T1_1mm_brain.nii.gz')
 brain_mask_nmi = os.path.join(os.environ['FSLDIR'], 'data/standard/MNI152_T1_1mm_brain_mask.nii.gz')
 
