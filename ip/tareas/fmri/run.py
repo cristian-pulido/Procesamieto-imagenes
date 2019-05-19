@@ -18,10 +18,13 @@ from nipype.algorithms.misc import Gunzip
 from miscellaneous.utils import *
 import nipype.interfaces.spm as spm
 import os
+from tareas.dependencias import definitions as d
+
+
 
 def run(base_dir,TR):
-    template = '/home/runlab/data/Atlas/TPM.nii'
-    matlab_cmd = '/home/colciencias/programas/spm12/run_spm12.sh /usr/local/MATLAB/MATLAB_Runtime/v95/ script'
+    template = d.tpm
+    matlab_cmd = '/home/cpulido/Documentos/programas/spm/spm12/run_spm12.sh /opt/mcr/v95/ script'
     spm.SPMCommand.set_mlab_paths(matlab_cmd=matlab_cmd, use_mcr=True)
 
     print('SPM version: ' + str(spm.SPMCommand().version))
@@ -238,6 +241,6 @@ def run(base_dir,TR):
                      (descomposition, datasink, [('plot_files', 'preprocessing.@descomposition_plot_files')]),
                      (descomposition, datasink, [('time_series', 'preprocessing.@descomposition_time_series')])
                  ])
-    preproc.write_graph(graph2use='colored', format='png', simple_form=True)
+    #preproc.write_graph(graph2use='colored', format='png', simple_form=True)
     preproc.run()
     os.system('rm -rf %s'%opj(base_dir, 'output/') + working_dir)

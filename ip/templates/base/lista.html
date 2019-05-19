@@ -60,38 +60,44 @@
           </button>
         </form>
         </td>
-      
-      {% elif not item.identificado  %}  
-            {% if item.user.pk == user.pk  %}
-                <td style="vertical-align: middle;">
-                <form>
-                  <button class="btn btn-link enabled" formaction="{% url 'picture' item.pk%}" title="Ver información">{{ forloop.counter }}
-                  </button>
-                </form>
-              </td>
-            {% else %}
-                <td style="vertical-align: middle;">
-                <form>
-                  <button class="btn btn-link enabled" formaction="#" title="Falta Clasificación de Imágenes por el propietario">{{ forloop.counter }}
-                  </button>
-                </form>
-              </td>
-            {% endif%}
-      {% elif item.identificado  %}  
-        <td style="vertical-align: middle;">
-                <form>
-                  <button class="btn btn-link enabled" formaction="{% url 'picture' item.pk%}" title="Ver información">{{ forloop.counter }}
-                  </button>
-                </form>
-              </td>
       {% else %}
-      <td style="vertical-align: middle;">
-        <form>
-          <button class="btn btn-link enabled" formaction="#" title="Aun en Proceso">{{ forloop.counter }}
-          </button>
-        </form>
-      </td>
-      {% endif%}
+	      {% if not item.anonimo == True %}   
+
+		<td style="vertical-align: middle;">
+			<form>
+			  <button class="btn btn-link enabled" formaction="#" title="Aun en Proceso">{{ forloop.counter }}
+			  </button>
+			</form>
+		</td>
+	      {% else %}
+      
+	      {% if not item.identificado  %}  
+		    {% if item.user.pk == user.pk  %}
+		        <td style="vertical-align: middle;">
+		        <form>
+		          <button class="btn btn-link enabled" formaction="{% url 'picture' item.pk%}" title="Ver información">{{ forloop.counter }}
+		          </button>
+		        </form>
+		      </td>
+		    {% else %}
+		        <td style="vertical-align: middle;">
+		        <form>
+		          <button class="btn btn-link enabled" formaction="#" title="Falta Clasificación de Imágenes por el propietario">{{ forloop.counter }}
+		          </button>
+		        </form>
+		      </td>
+		    {% endif%}
+	      {% else  %}  
+		<td style="vertical-align: middle;">
+		        <form>
+		          <button class="btn btn-link enabled" formaction="{% url 'picture' item.pk%}" title="Ver información">{{ forloop.counter }}
+		          </button>
+		        </form>
+		      </td>
+      		{% endif %}
+          {% endif %}
+      {% endif %}
+     
       <td style="vertical-align: middle;">{{item.get_name}}</td>
       <td>
       	<form>

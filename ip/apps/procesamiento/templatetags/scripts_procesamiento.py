@@ -128,9 +128,9 @@ def tareas_defecto():
     
     if len(P) == 0 :
                 
-        eddy=Task.objects.get_or_create(nombre="eddy correction",
-                                        pathscript=os.path.join(folder_tareas,"eddy_correction.py"),
-                                        tipo_imagen=DWI)[0]
+        # eddy=Task.objects.get_or_create(nombre="eddy correction",
+        #                                 pathscript=os.path.join(folder_tareas,"eddy_correction.py"),
+        #                                 tipo_imagen=DWI)[0]
         nlm=Task.objects.get_or_create(nombre="Non Local Mean",
                                        pathscript=os.path.join(folder_tareas,"nonLocalMean.py"),
                                        tipo_imagen=DWI)[0]
@@ -161,7 +161,7 @@ def tareas_defecto():
                                                    tipo_imagen=DWI,
                                                    dependencia=bet_dwi)[0]
         pre_DWI=Taskgroup.objects.get_or_create(nombre="Preprocesamiento DWI",tipo_imagen=DWI,eliminable=False)[0]
-        task_pre_dwi=[eddy,nlm,reslicing,bet_dwi,dwi_2_mni]
+        task_pre_dwi=[nlm,reslicing,bet_dwi,dwi_2_mni]
         orden=""
         for t in task_pre_dwi:
             pre_DWI.task.add(t)
@@ -234,10 +234,10 @@ def tareas_defecto():
                                          word_key="dwi_masked.nii.gz",
                                          tipo="Archivo nii")
     
-    eddy=Task.objects.get_or_create(nombre="eddy correction")[0]
-    default_result.objects.get_or_create(nombre="Eddy Correct",task=eddy,
-                                         word_key="EddyCorrect.nii.gz",
-                                         tipo="Archivo nii")
+    # eddy=Task.objects.get_or_create(nombre="eddy correction")[0]
+    # default_result.objects.get_or_create(nombre="Eddy Correct",task=eddy,
+    #                                      word_key="EddyCorrect.nii.gz",
+    #                                      tipo="Archivo nii")
     
     nlm=Task.objects.get_or_create(nombre="Non Local Mean")[0]
     default_result.objects.get_or_create(nombre="Non Local Mean",task=nlm,

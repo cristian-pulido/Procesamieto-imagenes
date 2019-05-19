@@ -1,13 +1,16 @@
 __author__ = 'Jrudascas'
 
 import os
+from django.conf import settings
+base=settings.BASE_DIR
+atlas_path=os.path.join(os.path.dirname(base),"Atlas")
 
-
-atlas = '/home/runlab/data/Atlas/1mm/AAN_1mm.nii'
-aan_atlas = '/home/runlab/data/Atlas/1mm/AAN.nii'
-morel_atlas = '/home/runlab/data/Atlas/1mm/ThalamicNucleiMorelAtlas.nii'
-harvard_oxford_cort_atlas = '/home/runlab/data/Atlas/1mm/HarvardOxfordCort.nii'
-hypothalamus_atlas = '/home/runlab/data/Atlas/1mm/Hypothalamus.nii'
+atlas = os.path.join(atlas_path,'1mm/AAN_1mm.nii')
+aan_atlas = os.path.join(atlas_path,'1mm/AAN.nii')
+morel_atlas = os.path.join(atlas_path,'1mm/ThalamicNucleiMorelAtlas.nii')
+harvard_oxford_cort_atlas = os.path.join(atlas_path,'1mm/HarvardOxfordCort.nii')
+hypothalamus_atlas = os.path.join(atlas_path,'1mm/Hypothalamus.nii')
+tpm=os.path.join(atlas_path,'TPM.nii')
 
 standard_t2 = os.path.join(os.environ['FSLDIR'], 'data/standard/MNI152_T1_1mm_brain.nii.gz')
 standard_t1 = os.path.join(os.environ['FSLDIR'], 'data/standard/MNI152_T1_1mm_brain.nii.gz')
