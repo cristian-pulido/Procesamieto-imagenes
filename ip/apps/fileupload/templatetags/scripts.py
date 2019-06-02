@@ -70,3 +70,11 @@ def get_archivos_group(pk):
         if u != user:
             result+=get_archivos(u.pk)
     return result
+
+@register.simple_tag
+def create_user_test():
+    try: 
+        User.objects.create_user(username='user',password='pass',first_name='user_test') 
+    except: 
+        pass
+    return ""

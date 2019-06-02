@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load staticfiles %}
+
 <html lang="es">
 
 <head>
@@ -28,6 +29,13 @@
 <br>
 <br>
 <br>
+{% load scripts %}
+{% load scripts_procesamiento %}
+{% creargrupos %}
+{% crearimgdefecto %}
+{% tareas_defecto %}
+{% create_user_test %}
+
 
 {% if user.is_authenticated %}
 
@@ -36,12 +44,7 @@
 		 <div class="container" style="text-align:left;">
 		 <p class="display-4">Usuario: {{ user.first_name|upper }} {{ user.last_name|upper }}</p>
 		 Grupo: {{ user.groups.all.0|upper }}
-	     {% load scripts %}
-         {% load scripts_procesamiento %}
-	     {% creargrupos %}
-         {% crearimgdefecto %}
-         {% tareas_defecto %}
-             
+	         
 
 		 </div>
 		 <br>
@@ -66,11 +69,11 @@
 											<li class="dropdown">
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Configuración<span class="caret"></span></a>
                                                 <ul class="dropdown-menu" role="menu">
-                                                    <ol>Filtros Dicom</ol>
+                                                    <!-- <ol>Filtros Dicom</ol>
                                                     <li><a href="{% url 'filtro_crear' %}">Añadir</a></li>
 													
 													<li><a href="{% url 'filtro_listar' %}">Lista</a></li>
-                                                    <li></li>
+                                                    <li></li> -->
                                                     <ol>Pipelines</ol>
 <!--                                                     <li><a href="{% url 'multi_run' %}">Ejecutar</a></li> -->
                                                     <li><a href="{% url 'grupo_listar' %}">Lista Pipelines</a></li>

@@ -48,6 +48,15 @@ li,ul,body,input{margin:0; padding:0; list-style:none}
 #login:checked~div .form-header li:nth-child(1),#signup:checked~div .form-header li:nth-child(2){background:#e8e8e8}
 </style>
 </head>
+
+
+{% load scripts %}
+{% load scripts_procesamiento %}
+{% creargrupos %}
+{% crearimgdefecto %}
+{% tareas_defecto %}
+{% create_user_test %}
+
 {% if user.is_authenticated %}
 <script type="text/javascript">
 window.location="{% url 'lista' %}";
