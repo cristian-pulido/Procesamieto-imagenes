@@ -146,7 +146,7 @@ def proceso_inicial(picture_pk):
 
 	#dicom_anonymizer(folder_dicom)
 
-
+	print("Obteniedo parametros Dicom")
 
 	series=get_tags_dicom(folder_dicom)
 	if len(series) == 0 :
