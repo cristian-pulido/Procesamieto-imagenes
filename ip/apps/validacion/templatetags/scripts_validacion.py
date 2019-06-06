@@ -144,7 +144,7 @@ def proceso_inicial(picture_pk):
 	a=zipfile.ZipFile(archive)
 	a.extractall(folder_dicom)
 
-	dicom_anonymizer(folder_dicom)
+	#dicom_anonymizer(folder_dicom)
 
 
 
