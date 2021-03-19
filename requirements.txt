@@ -18,7 +18,7 @@ dipy==0.16.0
 Django==2.1.7
 django-allauth==0.39.1
 django-report-builder==6.2.2
-djangorestframework==3.9.1
+djangorestframework==3.11.2
 et-xmlfile==1.0.1
 execnet==1.6.0
 funcsigs==1.0.2
