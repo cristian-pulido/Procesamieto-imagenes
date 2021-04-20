@@ -65,7 +65,7 @@ pluggy==0.8.1
 prompt-toolkit==2.0.7
 prov==1.5.3
 ptyprocess==0.6.0
-py==1.7.0
+py==1.10.0
 pycparser==2.19
 pydot==1.4.1
 pydotplus==2.0.2
