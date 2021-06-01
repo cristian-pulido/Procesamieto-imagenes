@@ -93,7 +93,7 @@ sphinxcontrib-websupport==1.1.0
 tqdm==4.29.1
 traitlets==4.3.2
 traits==4.6.0
-urllib3==1.24.1
+urllib3==1.26.5
 wcwidth==0.1.7
 Whoosh==2.7.4
 wrapt==1.11.0
