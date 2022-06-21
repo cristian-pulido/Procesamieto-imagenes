@@ -53,7 +53,7 @@ neurdflib==5.0.0.post1
 nibabel==2.3.3
 nilearn==0.5.0
 nipype==1.1.7
-numpy==1.16.0
+numpy==1.22.0
 packaging==18.0
 parso==0.3.1
 pathlib2==2.3.3
